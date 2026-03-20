@@ -8,7 +8,7 @@ import streamlit as st
 import pandas as pd
 from data.repositories.transaction_repo import TransactionRepo
 from services.insights import generate_insights
-from components.ui import apply_theme, alert_banner
+from components.ui import apply_theme
 
 st.set_page_config(
     page_title="Finance Audit - Dashboard",
@@ -45,38 +45,6 @@ st.markdown(
     background: rgba(255,255,255,0.1);
     color: white;
 }
-</style>
-""",
-    unsafe_allow_html=True,
-)
-
-with st.sidebar:
-    st.markdown(
-        """
-    <div style="padding: 1rem 0; text-align: center;">
-        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📊</div>
-        <h1 style="font-size: 1.25rem; color: white; margin: 0;">Finance Audit</h1>
-        <p style="font-size: 0.75rem; color: rgba(255,255,255,0.6); margin: 0.25rem 0 0 0;">Enterprise Edition</p>
-    </div>
-    """,
-        unsafe_allow_html=True,
-    )
-
-    st.markdown("---")
-
-    st.markdown("### Navigation")
-
-    st.page_link("main.py", label="📤 Upload Statement", icon="📤")
-    st.page_link("pages/dashboard.py", label="📈 Dashboard", icon="📈")
-
-    st.markdown("---")
-
-    st.markdown("### Quick Stats")
-    st.caption("View all analytics here")
-
-st.markdown(
-    """
-<style>
 .page-header {
     background: linear-gradient(135deg, #1e3a5f 0%, #2d4a6f 100%);
     border-radius: 16px;
@@ -113,48 +81,6 @@ st.markdown(
     font-size: 0.8rem;
     color: rgba(255,255,255,0.7);
 }
-.section-card {
-    background: white;
-    border-radius: 16px;
-    padding: 1.75rem;
-    border: 1px solid #e2e8f0;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-}
-.section-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #e2e8f0;
-}
-.section-header h2 {
-    margin: 0;
-    font-size: 1.15rem;
-    font-weight: 600;
-    color: #1e293b;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-.section-header h2 .icon {
-    font-size: 1.5rem;
-}
-.section-badge {
-    background: #f1f5f9;
-    padding: 0.35rem 0.75rem;
-    border-radius: 9999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: #475569;
-}
-.kpi-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1.25rem;
-    margin-bottom: 1.5rem;
-}
 .kpi-card {
     background: white;
     border-radius: 12px;
@@ -162,6 +88,7 @@ st.markdown(
     border: 1px solid #e2e8f0;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 .kpi-card::before {
     content: '';
@@ -193,61 +120,6 @@ st.markdown(
     color: #94a3b8;
     margin-top: 0.25rem;
 }
-.progress-container {
-    background: #f1f5f9;
-    border-radius: 8px;
-    height: 12px;
-    overflow: hidden;
-    margin-top: 1rem;
-}
-.progress-bar {
-    height: 100%;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding-right: 0.5rem;
-    font-size: 0.7rem;
-    font-weight: 600;
-    color: white;
-    transition: width 0.3s ease;
-}
-.insight-card {
-    background: #fffbeb;
-    border: 1px solid #fde68a;
-    border-radius: 12px;
-    padding: 1.25rem;
-    margin-bottom: 1rem;
-}
-.insight-card.warning {
-    background: #fffbeb;
-    border-color: #fde68a;
-}
-.insight-card.success {
-    background: #ecfdf5;
-    border-color: #a7f3d0;
-}
-.insight-header {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
-}
-.insight-header .icon {
-    font-size: 1.25rem;
-}
-.insight-header h4 {
-    margin: 0;
-    font-size: 0.95rem;
-    font-weight: 600;
-}
-.insight-card.warning .insight-header h4 { color: #92400e; }
-.insight-card.success .insight-header h4 { color: #065f46; }
-.insight-body {
-    font-size: 0.875rem;
-    color: #64748b;
-    line-height: 1.5;
-}
 .nav-btn {
     display: inline-flex;
     align-items: center;
@@ -258,24 +130,39 @@ st.markdown(
     border-radius: 8px;
     font-size: 0.85rem;
     color: #475569;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-.nav-btn:hover {
-    background: #e2e8f0;
-    color: #1e293b;
 }
 .nav-btn.primary {
     background: #1e3a5f;
     color: white;
 }
-.nav-btn.primary:hover {
-    background: #2d4a6f;
-}
 </style>
 """,
     unsafe_allow_html=True,
 )
+
+with st.sidebar:
+    st.markdown(
+        """
+    <div style="padding: 1rem 0; text-align: center;">
+        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📊</div>
+        <h1 style="font-size: 1.25rem; color: white; margin: 0;">Finance Audit</h1>
+        <p style="font-size: 0.75rem; color: rgba(255,255,255,0.6); margin: 0.25rem 0 0 0;">Enterprise Edition</p>
+    </div>
+    """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown("---")
+
+    st.markdown("### Navigation")
+
+    st.page_link("main.py", label="📤 Upload Statement", icon="📤")
+    st.page_link("pages/dashboard.py", label="📈 Dashboard", icon="📈")
+
+    st.markdown("---")
+
+    st.markdown("### Quick Stats")
+    st.caption("View all analytics here")
 
 DEMO_USER_ID = str(uuid.uuid5(uuid.NAMESPACE_DNS, "demo-user"))
 
@@ -295,7 +182,7 @@ st.markdown(
             <span class="stat-label">Transactions</span>
         </div>
         <div class="stat">
-            <span class="stat-value" id="txn-count">{txn_count}</span>
+            <span class="stat-value">{txn_count}</span>
             <span class="stat-label">Loaded</span>
         </div>
     </div>
@@ -307,7 +194,7 @@ st.markdown(
 if not transactions:
     st.markdown(
         """
-    <div style="text-align: center; padding: 4rem 2rem;">
+    <div style="text-align: center; padding: 4rem 2rem; background: white; border-radius: 16px; border: 1px solid #e2e8f0;">
         <div style="font-size: 4rem; margin-bottom: 1rem;">📂</div>
         <h2 style="color: #1e293b; margin-bottom: 0.5rem;">No Transactions Found</h2>
         <p style="color: #64748b; margin-bottom: 1.5rem;">
@@ -329,9 +216,7 @@ st.markdown(
         Showing <strong>{len(transactions)}</strong> transactions
     </span>
     <a href="/" style="text-decoration: none;">
-        <button class="nav-btn">
-            ← Upload New
-        </button>
+        <button class="nav-btn">← Upload New</button>
     </a>
 </div>
 """,
@@ -394,6 +279,8 @@ with col4:
         unsafe_allow_html=True,
     )
 
+st.markdown("---")
+
 progress_pct = min(cf["savings_rate"], 100)
 savings_msg = (
     "Excellent!"
@@ -403,14 +290,13 @@ savings_msg = (
     else "You're spending more than you earn"
 )
 
-st.markdown(
-    f"""
-<div class="section-card">
-    <div class="section-header">
-        <h2><span class="icon">💰</span> Savings Rate</h2>
-    </div>
-    <div class="progress-container">
-        <div class="progress-bar" style="width: {progress_pct}%; background: linear-gradient(90deg, #3b82f6, #10b981);">
+savings_html = f"""
+<div style="background: white; border-radius: 16px; border: 1px solid #e2e8f0; padding: 1.75rem; margin-bottom: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+    <h3 style="margin: 0 0 1.5rem 0; font-size: 1.15rem; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 0.75rem; padding-bottom: 1rem; border-bottom: 1px solid #e2e8f0;">
+        💰 Savings Rate
+    </h3>
+    <div style="background: #f1f5f9; border-radius: 8px; height: 12px; overflow: hidden; margin-top: 1rem;">
+        <div style="width: {progress_pct}%; background: linear-gradient(90deg, #3b82f6, #10b981); height: 100%; border-radius: 8px; display: flex; align-items: center; justify-content: flex-end; padding-right: 0.5rem; font-size: 0.7rem; font-weight: 600; color: white;">
             {cf["savings_rate"]}%
         </div>
     </div>
@@ -418,9 +304,8 @@ st.markdown(
         {cf["savings_rate"]}% of your income is being saved. {savings_msg}
     </p>
 </div>
-""",
-    unsafe_allow_html=True,
-)
+"""
+st.html(savings_html)
 
 st.markdown("---")
 
@@ -443,15 +328,12 @@ color_map = {
 }
 
 with col1:
-    st.markdown(
-        """
-    <div class="section-card">
-        <div class="section-header">
-            <h2><span class="icon">📊</span> Spending by Category</h2>
-        </div>
-    """,
-        unsafe_allow_html=True,
-    )
+    cat_html = """
+    <div style="background: white; border-radius: 16px; border: 1px solid #e2e8f0; padding: 1.75rem; margin-bottom: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+        <h3 style="margin: 0 0 1.5rem 0; font-size: 1.15rem; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 0.75rem; padding-bottom: 1rem; border-bottom: 1px solid #e2e8f0;">
+            📊 Spending by Category
+        </h3>
+    """
 
     if merch["by_category"]:
         sorted_cats = sorted(
@@ -462,143 +344,128 @@ with col1:
         for cat in sorted_cats:
             pct = (cat["total_spend"] / max_spend) * 100
             color = color_map.get(cat["category"], "#64748b")
-            st.markdown(
-                f"""
-            <div style="display: flex; align-items: center; gap: 1rem; margin: 0.75rem 0;">
-                <div style="width: 140px; font-size: 0.9rem; color: #475569;">{cat["category"]}</div>
-                <div style="flex: 1; background: #f1f5f9; border-radius: 6px; height: 28px; overflow: hidden;">
-                    <div style="width: {pct}%; background: {color}; height: 100%; border-radius: 6px; display: flex; align-items: center; padding-left: 0.75rem; font-size: 0.75rem; font-weight: 600; color: white;">
-                        {cat["txn_count"]} txns
+            cat_html += f"""
+            <div style="background: #f8fafc; border-radius: 10px; padding: 1rem; margin: 0.75rem 0; display: flex; align-items: center; gap: 1rem;">
+                <div style="width: 150px; font-size: 0.95rem; color: #475569; font-weight: 500;">{cat["category"]}</div>
+                <div style="flex: 1;">
+                    <div style="background: #e2e8f0; border-radius: 6px; height: 32px; overflow: hidden;">
+                        <div style="width: {pct}%; background: {color}; height: 100%; border-radius: 6px; display: flex; align-items: center; padding-left: 1rem; font-size: 0.8rem; font-weight: 600; color: white;">
+                            {cat["txn_count"]} txns
+                        </div>
                     </div>
                 </div>
-                <div style="width: 120px; text-align: right; font-size: 0.9rem; color: #1e293b; font-weight: 600;">₹{cat["total_spend"]:,.0f}</div>
+                <div style="width: 110px; text-align: right; font-size: 1rem; color: #1e293b; font-weight: 700;">₹{cat["total_spend"]:,.0f}</div>
             </div>
-            """,
-                unsafe_allow_html=True,
-            )
+            """
     else:
-        st.info("No categorized transactions found")
+        cat_html += """
+        <p style="color: #64748b; text-align: center; padding: 2rem;">No categorized transactions found</p>
+        """
 
-    st.markdown("</div>", unsafe_allow_html=True)
+    cat_html += "</div>"
+    st.html(cat_html)
 
 with col2:
-    st.markdown(
-        """
-    <div class="section-card">
-        <div class="section-header">
-            <h2><span class="icon">🏆</span> Top Merchants</h2>
-        </div>
-    """,
-        unsafe_allow_html=True,
-    )
+    merch_html = """
+    <div style="background: white; border-radius: 16px; border: 1px solid #e2e8f0; padding: 1.75rem; margin-bottom: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+        <h3 style="margin: 0 0 1.5rem 0; font-size: 1.15rem; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 0.75rem; padding-bottom: 1rem; border-bottom: 1px solid #e2e8f0;">
+            🏆 Top Merchants
+        </h3>
+    """
 
     if merch["top_merchants"]:
         for i, m in enumerate(merch["top_merchants"][:5], 1):
-            st.markdown(
-                f"""
-            <div style="display: flex; align-items: center; gap: 1rem; padding: 0.75rem 0; border-bottom: 1px solid #f1f5f9;">
-                <div style="width: 28px; height: 28px; border-radius: 50%; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.85rem; color: #475569;">
-                    {i}
-                </div>
-                <div style="flex: 1;">
-                    <div style="font-weight: 600; font-size: 0.9rem; color: #1e293b;">{m["name"]}</div>
-                    <div style="font-size: 0.75rem; color: #94a3b8;">{m["txn_count"]} transactions</div>
-                </div>
-                <div style="font-weight: 600; color: #1e293b;">₹{m["total_spend"]:,.0f}</div>
-            </div>
-            """,
-                unsafe_allow_html=True,
+            badge_color = (
+                "#f59e0b"
+                if i == 1
+                else "#94a3b8"
+                if i == 2
+                else "#cd7f32"
+                if i == 3
+                else "#64748b"
             )
+            merch_html += f"""
+            <div style="display: flex; align-items: center; gap: 1rem; padding: 0.85rem 0; border-bottom: 1px solid #f1f5f9;">
+                <div style="width: 32px; height: 32px; border-radius: 50%; background: {badge_color}; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; color: white;">{i}</div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 600; font-size: 0.95rem; color: #1e293b;">{m["name"]}</div>
+                    <div style="font-size: 0.8rem; color: #94a3b8;">{m["txn_count"]} transactions</div>
+                </div>
+                <div style="font-weight: 700; font-size: 1rem; color: #1e293b;">₹{m["total_spend"]:,.0f}</div>
+            </div>
+            """
     else:
-        st.caption("No merchant data available")
+        merch_html += """
+        <p style="color: #94a3b8; text-align: center; padding: 2rem;">No merchant data available</p>
+        """
 
-    st.markdown("</div>", unsafe_allow_html=True)
+    merch_html += "</div>"
+    st.html(merch_html)
 
 st.markdown("---")
 
 col1, col2 = st.columns(2)
 
-with col1:
-    st.markdown(
-        """
-    <div class="section-card">
-        <div class="section-header">
-            <h2><span class="icon">⚠️</span> Micro-Spending Leakage</h2>
-            <span class="section-badge">Alert</span>
-        </div>
-    """,
-        unsafe_allow_html=True,
-    )
+lk = insights["leakage"]
 
-    lk = insights["leakage"]
+with col1:
+    lk_html = f"""
+    <div style="background: white; border-radius: 16px; border: 1px solid #e2e8f0; padding: 1.75rem; margin-bottom: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+        <h3 style="margin: 0 0 1.5rem 0; font-size: 1.15rem; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 0.75rem; padding-bottom: 1rem; border-bottom: 1px solid #e2e8f0;">
+            ⚠️ Micro-Spending Leakage
+        </h3>
+    """
+
     if lk["small_txn_count"] > 0:
-        st.markdown(
-            f"""
-        <div class="insight-card warning">
-            <div class="insight-header">
-                <span class="icon">💸</span>
-                <h4>Potential Leakage Detected</h4>
-            </div>
-            <div class="insight-body">
+        lk_html += f"""
+        <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 1.25rem; margin: 1rem 0;">
+            <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem; font-weight: 600; color: #92400e;">💸 Potential Leakage Detected</h4>
+            <p style="margin: 0; font-size: 0.875rem; color: #64748b;">
                 You spent <strong>₹{lk["total_leaked"]:,.0f}</strong> in <strong>{lk["small_txn_count"]}</strong> small 
                 transactions (under ₹{lk["threshold"]}). These frequent small purchases can add up quickly.
-            </div>
+            </p>
         </div>
-        """,
-            unsafe_allow_html=True,
-        )
+        """
+    else:
+        lk_html += """
+        <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 12px; padding: 1.25rem; margin: 1rem 0;">
+            <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem; font-weight: 600; color: #065f46;">✅ No Leakage Detected</h4>
+            <p style="margin: 0; font-size: 0.875rem; color: #64748b;">Your spending appears well-managed with no significant micro-spending leakage.</p>
+        </div>
+        """
 
+    lk_html += "</div>"
+    st.html(lk_html)
+
+    if lk["small_txn_count"] > 0:
         with st.expander("View Small Transactions"):
             lk_df = pd.DataFrame(lk["transactions"])
             st.dataframe(lk_df, use_container_width=True, hide_index=True)
-    else:
-        st.markdown(
-            """
-        <div class="insight-card success">
-            <div class="insight-header">
-                <span class="icon">✅</span>
-                <h4>No Leakage Detected</h4>
-            </div>
-            <div class="insight-body">
-                Your spending appears well-managed with no significant micro-spending leakage.
-            </div>
-        </div>
-        """,
-            unsafe_allow_html=True,
-        )
 
-    st.markdown("</div>", unsafe_allow_html=True)
+rec = insights["recurring"]
 
 with col2:
-    st.markdown(
-        """
-    <div class="section-card">
-        <div class="section-header">
-            <h2><span class="icon">🔄</span> Recurring Payments</h2>
-            <span class="section-badge">Monthly</span>
-        </div>
-    """,
-        unsafe_allow_html=True,
-    )
+    rec_html = """
+    <div style="background: white; border-radius: 16px; border: 1px solid #e2e8f0; padding: 1.75rem; margin-bottom: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+        <h3 style="margin: 0 0 1.5rem 0; font-size: 1.15rem; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 0.75rem; padding-bottom: 1rem; border-bottom: 1px solid #e2e8f0;">
+            🔄 Recurring Payments
+        </h3>
+    """
 
-    rec = insights["recurring"]
     if rec["count"] > 0:
-        st.markdown(
-            f"""
-        <div style="background: #eff6ff; border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem;">
+        rec_html += f"""
+        <div style="background: #eff6ff; border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem;">
             <div style="font-size: 0.75rem; text-transform: uppercase; color: #3b82f6; font-weight: 600; margin-bottom: 0.5rem;">
                 Estimated Monthly Recurring
             </div>
-            <div style="font-size: 1.5rem; font-weight: 700; color: #1e40af;">
+            <div style="font-size: 1.75rem; font-weight: 700; color: #1e40af;">
                 ₹{rec["total_monthly_recurring"]:,.0f}
             </div>
-            <div style="font-size: 0.8rem; color: #64748b; margin-top: 0.25rem;">
+            <div style="font-size: 0.85rem; color: #64748b; margin-top: 0.25rem;">
                 From {rec["count"]} recurring payment sources
             </div>
         </div>
-        """,
-            unsafe_allow_html=True,
-        )
+        """
 
         rec_df = pd.DataFrame(rec["recurring_payments"])
         display_df = rec_df.rename(
@@ -609,25 +476,27 @@ with col2:
                 "monthly_estimate": "Monthly Total",
             }
         )
+        rec_html += "</div>"
+        st.html(rec_html)
         st.dataframe(display_df, use_container_width=True, hide_index=True)
     else:
-        st.caption("No recurring payments detected (need more data)")
-
-    st.markdown("</div>", unsafe_allow_html=True)
+        rec_html += """
+        <p style="color: #94a3b8; text-align: center; padding: 2rem;">No recurring payments detected (need more data)</p>
+        </div>
+    """
+    st.html(rec_html)
 
 st.markdown("---")
 
-st.markdown(
-    """
-<div class="section-card">
-    <div class="section-header">
-        <h2><span class="icon">📈</span> Spending Behavior</h2>
-    </div>
-""",
-    unsafe_allow_html=True,
-)
-
 bh = insights["behavior"]
+
+behavior_html = f"""
+<div style="background: white; border-radius: 16px; border: 1px solid #e2e8f0; padding: 1.75rem; margin-bottom: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+    <h3 style="margin: 0 0 1.5rem 0; font-size: 1.15rem; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 0.75rem; padding-bottom: 1rem; border-bottom: 1px solid #e2e8f0;">
+        📈 Spending Behavior
+    </h3>
+"""
+st.html(behavior_html)
 
 view = st.radio(
     "View spending by",
@@ -644,10 +513,11 @@ if view == "Day of Week":
     with col1:
         st.markdown(
             f"""
-        <div class="kpi-card" style="border-left-color: #10b981;">
-            <div class="kpi-label">Weekday Average</div>
-            <div class="kpi-value">₹{daily["avg_weekday"]:,.0f}</div>
-            <div class="kpi-subtitle">Mon - Fri average</div>
+        <div style="background: white; border-radius: 12px; padding: 1.5rem; border: 1px solid #e2e8f0; position: relative; overflow: hidden; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);">
+            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #10b981;"></div>
+            <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.5rem;">Weekday Average</div>
+            <div style="font-size: 1.75rem; font-weight: 700; color: #1e293b;">₹{daily["avg_weekday"]:,.0f}</div>
+            <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.25rem;">Mon - Fri average</div>
         </div>
         """,
             unsafe_allow_html=True,
@@ -656,10 +526,11 @@ if view == "Day of Week":
     with col2:
         st.markdown(
             f"""
-        <div class="kpi-card" style="border-left-color: #f59e0b;">
-            <div class="kpi-label">Weekend Average</div>
-            <div class="kpi-value">₹{daily["avg_weekend"]:,.0f}</div>
-            <div class="kpi-subtitle">Sat - Sun average</div>
+        <div style="background: white; border-radius: 12px; padding: 1.5rem; border: 1px solid #e2e8f0; position: relative; overflow: hidden; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);">
+            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #f59e0b;"></div>
+            <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.5rem;">Weekend Average</div>
+            <div style="font-size: 1.75rem; font-weight: 700; color: #1e293b;">₹{daily["avg_weekend"]:,.0f}</div>
+            <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.25rem;">Sat - Sun average</div>
         </div>
         """,
             unsafe_allow_html=True,
@@ -668,10 +539,11 @@ if view == "Day of Week":
     with col3:
         st.markdown(
             f"""
-        <div class="kpi-card" style="border-left-color: #3b82f6;">
-            <div class="kpi-label">Peak Spending Day</div>
-            <div class="kpi-value">{daily["peak_day"]}</div>
-            <div class="kpi-subtitle">Highest spending day</div>
+        <div style="background: white; border-radius: 12px; padding: 1.5rem; border: 1px solid #e2e8f0; position: relative; overflow: hidden; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);">
+            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #3b82f6;"></div>
+            <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.5rem;">Peak Spending Day</div>
+            <div style="font-size: 1.75rem; font-weight: 700; color: #1e293b;">{daily["peak_day"]}</div>
+            <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.25rem;">Highest spending day</div>
         </div>
         """,
             unsafe_allow_html=True,
@@ -680,7 +552,9 @@ if view == "Day of Week":
     if daily["weekend_multiplier"] > 0:
         multiplier = daily["weekend_multiplier"]
         is_high = multiplier > 1.2
-        card_class = "warning" if is_high else "success"
+        alert_bg = "#fffbeb" if is_high else "#ecfdf5"
+        alert_border = "#fde68a" if is_high else "#a7f3d0"
+        alert_color = "#92400e" if is_high else "#065f46"
         msg = (
             "This is significantly higher than weekdays."
             if is_high
@@ -688,15 +562,12 @@ if view == "Day of Week":
         )
         st.markdown(
             f"""
-        <div class="insight-card {card_class}">
-            <div class="insight-header">
-                <span class="icon">📊</span>
-                <h4>Weekend Spending Analysis</h4>
-            </div>
-            <div class="insight-body">
+        <div style="background: {alert_bg}; border: 1px solid {alert_border}; border-radius: 12px; padding: 1.25rem; margin-top: 1rem;">
+            <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem; font-weight: 600; color: {alert_color};">📊 Weekend Spending Analysis</h4>
+            <p style="margin: 0; font-size: 0.875rem; color: #64748b;">
                 Your weekend spending is <strong>{multiplier}x</strong> your weekday average.
                 {msg}
-            </div>
+            </p>
         </div>
         """,
             unsafe_allow_html=True,
@@ -716,9 +587,10 @@ else:
     with col1:
         st.markdown(
             f"""
-        <div class="kpi-card">
-            <div class="kpi-label">Avg Monthly Spend</div>
-            <div class="kpi-value">₹{monthly["avg_monthly_spend"]:,.0f}</div>
+        <div style="background: white; border-radius: 12px; padding: 1.5rem; border: 1px solid #e2e8f0; position: relative; overflow: hidden; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);">
+            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #3b82f6;"></div>
+            <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.5rem;">Avg Monthly Spend</div>
+            <div style="font-size: 1.75rem; font-weight: 700; color: #1e293b;">₹{monthly["avg_monthly_spend"]:,.0f}</div>
         </div>
         """,
             unsafe_allow_html=True,
@@ -734,12 +606,11 @@ else:
         )
         st.markdown(
             f"""
-        <div class="kpi-card" style="border-left-color: {trend_color};">
-            <div class="kpi-label">Spending Trend</div>
-            <div class="kpi-value">{monthly["trend"].capitalize()}</div>
-            <div class="kpi-subtitle">
-                {"+" if monthly["trend_pct"] > 0 else ""}{monthly["trend_pct"]:.1f}% change
-            </div>
+        <div style="background: white; border-radius: 12px; padding: 1.5rem; border: 1px solid #e2e8f0; position: relative; overflow: hidden; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);">
+            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: {trend_color};"></div>
+            <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.5rem;">Spending Trend</div>
+            <div style="font-size: 1.75rem; font-weight: 700; color: #1e293b;">{monthly["trend"].capitalize()}</div>
+            <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.25rem;">{"+" if monthly["trend_pct"] > 0 else ""}{monthly["trend_pct"]:.1f}% change</div>
         </div>
         """,
             unsafe_allow_html=True,
@@ -748,9 +619,10 @@ else:
     with col3:
         st.markdown(
             f"""
-        <div class="kpi-card">
-            <div class="kpi-label">Months Tracked</div>
-            <div class="kpi-value">{monthly["total_months"]}</div>
+        <div style="background: white; border-radius: 12px; padding: 1.5rem; border: 1px solid #e2e8f0; position: relative; overflow: hidden; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);">
+            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #64748b;"></div>
+            <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.5rem;">Months Tracked</div>
+            <div style="font-size: 1.75rem; font-weight: 700; color: #1e293b;">{monthly["total_months"]}</div>
         </div>
         """,
             unsafe_allow_html=True,
@@ -761,15 +633,12 @@ else:
         with col1:
             st.markdown(
                 f"""
-            <div class="insight-card warning">
-                <div class="insight-header">
-                    <span class="icon">📈</span>
-                    <h4>Highest Month</h4>
-                </div>
-                <div class="insight-body">
+            <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 1.25rem; margin-top: 1rem;">
+                <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem; font-weight: 600; color: #92400e;">📈 Highest Month</h4>
+                <p style="margin: 0; font-size: 0.875rem; color: #64748b;">
                     <strong>{monthly["highest_month"]["label"]}</strong> with 
                     <strong>₹{monthly["highest_month"]["spend"]:,.0f}</strong> in spending
-                </div>
+                </p>
             </div>
             """,
                 unsafe_allow_html=True,
@@ -777,15 +646,12 @@ else:
         with col2:
             st.markdown(
                 f"""
-            <div class="insight-card success">
-                <div class="insight-header">
-                    <span class="icon">📉</span>
-                    <h4>Lowest Month</h4>
-                </div>
-                <div class="insight-body">
+            <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 12px; padding: 1.25rem; margin-top: 1rem;">
+                <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem; font-weight: 600; color: #065f46;">📉 Lowest Month</h4>
+                <p style="margin: 0; font-size: 0.875rem; color: #64748b;">
                     <strong>{monthly["lowest_month"]["label"]}</strong> with 
                     <strong>₹{monthly["lowest_month"]["spend"]:,.0f}</strong> in spending
-                </div>
+                </p>
             </div>
             """,
                 unsafe_allow_html=True,
@@ -794,12 +660,13 @@ else:
     if monthly["mom_growth"]:
         st.markdown(
             """
-        <h4 style="margin-top: 1.5rem; margin-bottom: 1rem; color: #1e293b;">
+        <h4 style="margin-top: 1.5rem; margin-bottom: 1rem; color: #1e293b; font-size: 1rem; font-weight: 600;">
             Month-over-Month Growth
         </h4>
         """,
             unsafe_allow_html=True,
         )
+
         mom_df = pd.DataFrame(monthly["mom_growth"])
         mom_df["growth_display"] = mom_df["growth_pct"].apply(
             lambda x: (
@@ -808,58 +675,32 @@ else:
         )
         mom_df["spend_display"] = mom_df["spend"].apply(lambda x: f"₹{x:,.0f}")
 
-        st.markdown(
-            """
-        <style>
-        .mom-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .mom-table th, .mom-table td {
-            padding: 0.75rem 1rem;
-            text-align: left;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        .mom-table th {
-            background: #f8fafc;
-            font-weight: 600;
-            color: #475569;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-        }
-        .mom-table td {
-            color: #1e293b;
-            font-size: 0.9rem;
-        }
-        </style>
-        <table class="mom-table">
+        table_html = """
+        <table style="width: 100%; border-collapse: collapse; margin-top: 1rem; background: #f8fafc; border-radius: 8px; overflow: hidden;">
             <thead>
-                <tr>
-                    <th>Month</th>
-                    <th>Previous Month</th>
-                    <th>Spend</th>
-                    <th>Change</th>
+                <tr style="background: #e2e8f0;">
+                    <th style="padding: 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #475569; text-transform: uppercase;">Month</th>
+                    <th style="padding: 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #475569; text-transform: uppercase;">Previous</th>
+                    <th style="padding: 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #475569; text-transform: uppercase;">Spend</th>
+                    <th style="padding: 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #475569; text-transform: uppercase;">Change</th>
                 </tr>
             </thead>
             <tbody>
-        """,
-            unsafe_allow_html=True,
-        )
+        """
 
         for _, row in mom_df.iterrows():
-            st.markdown(
-                f"""
-                <tr>
-                    <td>{row["month"]}</td>
-                    <td>{row["prev_month"]}</td>
-                    <td>{row["spend_display"]}</td>
-                    <td>{row["growth_display"]}</td>
+            table_html += f"""
+                <tr style="border-bottom: 1px solid #e2e8f0;">
+                    <td style="padding: 1rem; font-size: 0.9rem; color: #1e293b;">{row["month"]}</td>
+                    <td style="padding: 1rem; font-size: 0.9rem; color: #1e293b;">{row["prev_month"]}</td>
+                    <td style="padding: 1rem; font-size: 0.9rem; color: #1e293b;">{row["spend_display"]}</td>
+                    <td style="padding: 1rem; font-size: 0.9rem;">{row["growth_display"]}</td>
                 </tr>
-            """,
-                unsafe_allow_html=True,
-            )
+            """
 
-        st.markdown("</tbody></table>", unsafe_allow_html=True)
+        table_html += "</tbody></table>"
+
+        st.markdown(table_html, unsafe_allow_html=True)
 
     if monthly["chart"]:
         chart_df = pd.DataFrame(
@@ -870,7 +711,7 @@ else:
         )
         st.bar_chart(chart_df.set_index("Month")["Spend"])
 
-st.markdown("</div>", unsafe_allow_html=True)
+st.html("</div>")
 
 st.markdown("---")
 
