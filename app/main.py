@@ -6,7 +6,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 import streamlit as st
 from services.ingestion_service import IngestionService
-from components.ui import apply_theme, page_title, divider, alert_banner
+from components.ui import apply_theme, alert_banner
 
 st.set_page_config(
     page_title="Finance Audit - Upload",
@@ -19,68 +19,97 @@ apply_theme()
 
 DEMO_USER_ID = str(uuid.uuid5(uuid.NAMESPACE_DNS, "demo-user"))
 
+with st.sidebar:
+    st.image(
+        "app/assets/Gemini_Generated_Image_ri1spbri1spbri1s-removebg-preview.png",
+        width=200,
+    )
+    st.markdown(
+        """
+        <div class="sidebar-brand">
+            <h1>Finance Audit</h1>
+            <p>Enterprise Edition</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(
+        '<p class="sidebar-section-title">Navigation</p>', unsafe_allow_html=True
+    )
+    st.page_link("main.py", label="📤 Upload Statement")
+    st.page_link("pages/dashboard.py", label="📈 Dashboard")
+
+    st.markdown('<div class="sidebar-divider"></div>', unsafe_allow_html=True)
+
+    st.markdown(
+        '<p class="sidebar-section-title">Quick Links</p>', unsafe_allow_html=True
+    )
+    st.markdown("📊 View Analytics")
+    st.markdown("🔍 Search Transactions")
+
 st.markdown(
     """
-<style>
-.hero-container {
-    background: linear-gradient(135deg, #1e3a5f 0%, #2d4a6f 100%);
-    border-radius: 16px;
-    padding: 3rem 2rem;
-    margin-bottom: 2rem;
-    text-align: center;
-    color: white;
-}
-.hero-container h1 {
-    color: white !important;
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-}
-.hero-container p {
-    color: rgba(255,255,255,0.8);
-    font-size: 1.1rem;
-    margin: 0;
-}
-.features-row {
-    display: flex;
-    gap: 1rem;
-    margin: 2rem 0;
-}
-.feature-card {
-    flex: 1;
-    background: white;
-    border-radius: 12px;
-    padding: 1.5rem;
-    border: 1px solid #e2e8f0;
-    text-align: center;
-}
-.feature-card .icon {
-    font-size: 2rem;
-    margin-bottom: 0.75rem;
-}
-.feature-card h3 {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #1e293b;
-    margin-bottom: 0.5rem;
-}
-.feature-card p {
-    font-size: 0.85rem;
-    color: #64748b;
-    margin: 0;
-}
-</style>
-""",
+    <style>
+    .hero-container {
+        background: linear-gradient(135deg, #1e3a5f 0%, #2d4a6f 100%);
+        border-radius: 16px;
+        padding: 3rem 2rem;
+        margin-bottom: 2rem;
+        text-align: center;
+        color: white;
+    }
+    .hero-container h1 {
+        color: white !important;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    .hero-container p {
+        color: rgba(255,255,255,0.8);
+        font-size: 1.1rem;
+        margin: 0;
+    }
+    .features-row {
+        display: flex;
+        gap: 1rem;
+        margin: 2rem 0;
+    }
+    .feature-card {
+        flex: 1;
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 1px solid #e2e8f0;
+        text-align: center;
+    }
+    .feature-card .icon {
+        font-size: 2rem;
+        margin-bottom: 0.75rem;
+    }
+    .feature-card h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+    }
+    .feature-card p {
+        font-size: 0.85rem;
+        color: #64748b;
+        margin: 0;
+    }
+    </style>
+    """,
     unsafe_allow_html=True,
 )
 
 st.markdown(
     """
-<div class="hero-container">
-    <h1>📊 Personal Finance Audit</h1>
-    <p>Intelligent financial analysis and spending insights powered by AI</p>
-</div>
-""",
+    <div class="hero-container">
+        <h1>📊 Personal Finance Audit</h1>
+        <p>Intelligent financial analysis and spending insights powered by AI</p>
+    </div>
+    """,
     unsafe_allow_html=True,
 )
 

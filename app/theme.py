@@ -64,11 +64,105 @@ def get_css():
 
 /* Sidebar */
 [data-testid="stSidebar"] {{
-    background-color: {BG_DARK} !important;
+    background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%) !important;
     padding: 1rem;
 }}
 
+.st-emotion-cache-zy6yx3 {{
+    padding-top: 2rem !important;
+}}
+
 [data-testid="stSidebar"] [data-testid="stMarkdownContainer"] {{
+    color: white;
+}}
+
+[data-testid="stSidebarHeader"] {{
+    display: flex !important;
+    height: 2rem !important;
+    margin-bottom: 0 !important;
+}}
+
+[data-testid="stSidebarCollapseButton"] {{
+    display: flex !important;
+    visibility: visible !important;
+}}
+
+[data-testid="stLogoSpacer"] {{
+    display: none !important;
+}}
+
+/* Hide default Streamlit sidebar navigation */
+[data-testid="stSidebarNav"] {{
+    display: none !important;
+}}
+
+/* Sidebar brand section */
+.sidebar-brand {{
+    text-align: center;
+    padding: 0rem 1rem;
+    margin: 0;
+    background: rgba(255,255,255,0.05);
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.08);
+}}
+.sidebar-brand .logo {{
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}}
+.sidebar-brand h1 {{
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    color: white !important;
+    margin: 0 !important;
+}}
+.sidebar-brand p {{
+    font-size: 0.75rem !important;
+    color: rgba(148, 163, 184, 0.7) !important;
+    margin: 0.25rem 0 0 0 !important;
+}}
+
+/* Section titles */
+.sidebar-section-title {{
+    font-size: 0.65rem !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.12em !important;
+    color: rgba(148, 163, 184, 0.5) !important;
+    padding: 1rem 0.75rem 0.25rem !important;
+    margin: 0 !important;
+}}
+
+/* Dividers */
+.sidebar-divider {{
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    margin: 0.75rem 0;
+}}
+
+/* Stats card */
+.sidebar-stats {{
+    background: rgba(255,255,255,0.04);
+    border-radius: 12px;
+    padding: 1rem;
+    margin: 0.5rem 0;
+}}
+.sidebar-stats .stat-row {{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.4rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}}
+.sidebar-stats .stat-row:last-child {{
+    border-bottom: none;
+}}
+.sidebar-stats .stat-label {{
+    font-size: 0.75rem;
+    color: rgba(148, 163, 184, 0.8);
+}}
+.sidebar-stats .stat-value {{
+    font-size: 0.85rem;
+    font-weight: 600;
     color: white;
 }}
 
@@ -344,9 +438,8 @@ h1, h2, h3, h4, h5, h6 {{
 }}
 
 /* Hide default streamlit elements */
-#MainMenu {{visibility: hidden;}}
 footer {{visibility: hidden;}}
-[data-testid="stToolbar"] {{visibility: hidden;}}
+
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {{

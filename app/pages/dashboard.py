@@ -19,167 +19,6 @@ st.set_page_config(
 
 apply_theme()
 
-st.markdown(
-    """
-<style>
-[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
-}
-[data-testid="stSidebar"] h1,
-[data-testid="stSidebar"] h2,
-[data-testid="stSidebar"] h3 {
-    color: white !important;
-}
-[data-testid="stSidebar"] a {
-    color: rgba(255,255,255,0.7);
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    border-radius: 8px;
-    margin: 0.25rem 0;
-    transition: all 0.2s ease;
-}
-[data-testid="stSidebar"] a:hover {
-    background: rgba(255,255,255,0.1);
-    color: white;
-}
-.page-header {
-    background: linear-gradient(135deg, #1e3a5f 0%, #2d4a6f 100%);
-    border-radius: 16px;
-    padding: 2rem 2.5rem;
-    margin-bottom: 2rem;
-    color: white;
-}
-.page-header h1 {
-    color: white !important;
-    font-size: 1.75rem;
-    font-weight: 700;
-    margin: 0 0 0.5rem 0;
-}
-.page-header p {
-    color: rgba(255,255,255,0.8);
-    font-size: 0.95rem;
-    margin: 0;
-}
-.page-header .stats {
-    display: flex;
-    gap: 2rem;
-    margin-top: 1.5rem;
-}
-.page-header .stat {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-.page-header .stat-value {
-    font-size: 1.25rem;
-    font-weight: 700;
-}
-.page-header .stat-label {
-    font-size: 0.8rem;
-    color: rgba(255,255,255,0.7);
-}
-.kpi-card {
-    background: white;
-    border-radius: 12px;
-    padding: 1.5rem;
-    border: 1px solid #e2e8f0;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-.kpi-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-}
-.kpi-card.income::before { background: #10b981; }
-.kpi-card.expenses::before { background: #ef4444; }
-.kpi-card.savings::before { background: #3b82f6; }
-.kpi-card.neutral::before { background: #64748b; }
-.kpi-label {
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #64748b;
-    margin-bottom: 0.5rem;
-}
-.kpi-value {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: #1e293b;
-}
-.kpi-subtitle {
-    font-size: 0.8rem;
-    color: #94a3b8;
-    margin-top: 0.25rem;
-}
-.nav-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    background: #f1f5f9;
-    border: none;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    color: #475569;
-}
-.nav-btn.primary {
-    background: #1e3a5f;
-    color: white;
-}
-.scrollable {
-    max-height: 350px;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: #cbd5e1 transparent;
-}
-.scrollable::-webkit-scrollbar {
-    width: 6px;
-}
-.scrollable::-webkit-scrollbar-track {
-    background: transparent;
-}
-.scrollable::-webkit-scrollbar-thumb {
-    background-color: #cbd5e1;
-    border-radius: 3px;
-}
-</style>
-""",
-    unsafe_allow_html=True,
-)
-
-with st.sidebar:
-    st.markdown(
-        """
-    <div style="padding: 1rem 0; text-align: center;">
-        <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📊</div>
-        <h1 style="font-size: 1.25rem; color: white; margin: 0;">Finance Audit</h1>
-        <p style="font-size: 0.75rem; color: rgba(255,255,255,0.6); margin: 0.25rem 0 0 0;">Enterprise Edition</p>
-    </div>
-    """,
-        unsafe_allow_html=True,
-    )
-
-    st.markdown("---")
-
-    st.markdown("### Navigation")
-
-    st.page_link("main.py", label="📤 Upload Statement", icon="📤")
-    st.page_link("pages/dashboard.py", label="📈 Dashboard", icon="📈")
-
-    st.markdown("---")
-
-    st.markdown("### Quick Stats")
-    st.caption("View all analytics here")
-
 DEMO_USER_ID = str(uuid.uuid5(uuid.NAMESPACE_DNS, "demo-user"))
 
 repo = TransactionRepo()
@@ -187,23 +26,177 @@ transactions = repo.get_transactions(DEMO_USER_ID)
 
 txn_count = len(transactions)
 
+with st.sidebar:
+    st.image(
+        "app/assets/Gemini_Generated_Image_ri1spbri1spbri1s-removebg-preview.png",
+        width=250,
+    )
+    st.markdown(
+        """
+        <div class="sidebar-brand">
+            <h4>Finance Audit</h4>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.markdown(
+        '<p class="sidebar-section-title">Navigation</p>', unsafe_allow_html=True
+    )
+    st.page_link("main.py", label="📤 Upload Statement")
+    st.page_link("pages/dashboard.py", label="📈 Dashboard")
+
+    st.markdown('<div class="sidebar-divider"></div>', unsafe_allow_html=True)
+
+    st.markdown('<p class="sidebar-section-title">Overview</p>', unsafe_allow_html=True)
+
+    st.markdown(
+        f"""
+        <div class="sidebar-stats">
+            <div class="stat-row">
+                <span class="stat-label">📊 Transactions</span>
+                <span class="stat-value">{txn_count}</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">🎯 Status</span>
+                <span class="stat-value" style="color: #10b981;">Active</span>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+st.markdown(
+    """
+    <style>
+    .page-header {
+        background: linear-gradient(135deg, #1e3a5f 0%, #2d4a6f 100%);
+        border-radius: 16px;
+        padding: 1.5rem 2rem;
+        margin-bottom: 1rem;
+        color: white;
+    }
+    .page-header h1 {
+        color: white !important;
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin: 0 0 0.5rem 0;
+    }
+    .page-header p {
+        color: rgba(255,255,255,0.8);
+        font-size: 0.95rem;
+        margin: 0;
+    }
+    .page-header .stats {
+        display: flex;
+        gap: 2rem;
+        margin-top: 1rem;
+    }
+    .page-header .stat {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .page-header .stat-value {
+        font-size: 1.25rem;
+        font-weight: 700;
+    }
+    .page-header .stat-label {
+        font-size: 0.8rem;
+        color: rgba(255,255,255,0.7);
+    }
+    .kpi-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        border: 1px solid #e2e8f0;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    .kpi-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+    }
+    .kpi-card.income::before { background: #10b981; }
+    .kpi-card.expenses::before { background: #ef4444; }
+    .kpi-card.savings::before { background: #3b82f6; }
+    .kpi-card.neutral::before { background: #64748b; }
+    .kpi-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #64748b;
+        margin-bottom: 0.5rem;
+    }
+    .kpi-value {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #1e293b;
+    }
+    .kpi-subtitle {
+        font-size: 0.8rem;
+        color: #94a3b8;
+        margin-top: 0.25rem;
+    }
+    .nav-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: #f1f5f9;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        color: #475569;
+    }
+    .nav-btn.primary {
+        background: #1e3a5f;
+        color: white;
+    }
+    .scrollable {
+        max-height: 350px;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #cbd5e1 transparent;
+    }
+    .scrollable::-webkit-scrollbar {
+        width: 6px;
+    }
+    .scrollable::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .scrollable::-webkit-scrollbar-thumb {
+        background-color: #cbd5e1;
+        border-radius: 3px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 st.markdown(
     f"""
-<div class="page-header">
-    <h1>📈 Financial Dashboard</h1>
-    <p>Comprehensive analysis of your financial transactions</p>
-    <div class="stats">
-        <div class="stat">
-            <span class="stat-value">📊</span>
-            <span class="stat-label">Transactions</span>
-        </div>
-        <div class="stat">
-            <span class="stat-value">{txn_count}</span>
-            <span class="stat-label">Loaded</span>
+    <div class="page-header">
+        <h1>📈 Financial Dashboard</h1>
+        <p>Comprehensive analysis of your financial transactions</p>
+        <div class="stats">
+            <div class="stat">
+                <span class="stat-value">📊</span>
+                <span class="stat-label">Transactions</span>
+            </div>
+            <div class="stat">
+                <span class="stat-value">{txn_count}</span>
+                <span class="stat-label">Loaded</span>
+            </div>
         </div>
     </div>
-</div>
-""",
+    """,
     unsafe_allow_html=True,
 )
 
