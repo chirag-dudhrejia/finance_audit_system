@@ -17,12 +17,21 @@ REQUIRED_COLUMNS = [
 
 
 def _coerce_numeric(val):
+    import math
+
     if val is None:
         return None
-    if isinstance(val, (int, float)):
+    if isinstance(val, float):
+        if math.isnan(val) or math.isinf(val):
+            return None
+        return val
+    if isinstance(val, int):
         return val
     try:
-        return float(str(val).replace(",", "").strip())
+        result = float(str(val).replace(",", "").strip())
+        if math.isnan(result) or math.isinf(result):
+            return None
+        return result
     except Exception:
         return None
 
@@ -107,25 +116,59 @@ def _extract_json_objects(text: str) -> List[dict]:
     return objects
 
 
+def _count_serial_numbers(page_text: str) -> int:
+    """Count expected transactions by finding serial number patterns.
+
+    Tries multiple patterns to handle varying PDF text extraction formatting.
+    """
+    count = 0
+    for line in page_text.split("\n"):
+        line = line.strip()
+        if not line:
+            continue
+        # Pattern 1: "1  14.03.2026 ..." or "12 17/03/2026 ..."
+        if re.match(r"^(\d{1,4})\s+\d{2}[./-]\d{2}[./-]\d{4}", line):
+            count += 1
+        # Pattern 2: "1. 14.03.2026 ..." or "12) 17.03.2026 ..."
+        elif re.match(r"^(\d{1,4})[.)]\s*\d{2}[./-]\d{2}[./-]\d{4}", line):
+            count += 1
+        # Pattern 3: serial and date on same line separated by pipes or multiple spaces
+        elif re.match(r"^(\d{1,4})\s*[|]\s*\d{2}[./-]\d{2}[./-]\d{4}", line):
+            count += 1
+        # Pattern 4: date appears anywhere after a short serial number at start
+        elif re.match(r"^(\d{1,4})\s{1,5}\S+\s+\d{2}[./-]\d{2}[./-]\d{4}", line):
+            count += 1
+    return count
+
+
 def _call_llm_with_retry(
     prompt: str, retries: int = 3, page_num: int = 0
 ) -> Optional[str]:
     for attempt in range(retries):
         try:
+            start = time.time()
             response = llm.generate_content(
                 prompt=prompt,
-                max_output_tokens=6000,
+                max_output_tokens=8000,
                 temperature=0,
             )
-            if response:
+            elapsed = time.time() - start
+            print(f"[LLM PARSER] Page {page_num}: response in {elapsed:.1f}s")
+            if response is not None:
                 return response
         except Exception as e:
             error_str = str(e)
+            print(
+                f"[LLM PARSER] Page {page_num}: attempt {attempt + 1} error: {error_str[:200]}"
+            )
             is_retryable = any(
-                code in error_str for code in ["429", "503", "timeout", "deadline"]
+                code in error_str.lower()
+                for code in ["429", "503", "timeout", "deadline", "rate", "overloaded"]
             )
             if is_retryable and attempt < retries - 1:
-                time.sleep(2**attempt)
+                wait = 2 ** (attempt + 1)
+                print(f"[LLM PARSER] Page {page_num}: retrying in {wait}s...")
+                time.sleep(wait)
             else:
                 return None
     return None
@@ -232,24 +275,55 @@ def _parse_pdf_with_llm(data: bytes) -> tuple[pd.DataFrame, str]:
                 print(f"[LLM PARSER] Page {page_num}: empty, skipping")
                 continue
 
-            print(f"[LLM PARSER] Page {page_num}: {len(page_text)} chars")
-            print(f"[LLM PARSER] Page {page_num}: raw response:\n{page_text}")
+            # Count expected transactions from serial numbers
+            expected_count = _count_serial_numbers(page_text)
+            print(
+                f"[LLM PARSER] Page {page_num}: {len(page_text)} chars, "
+                f"~{expected_count} transactions expected"
+            )
 
-            prompt = f"""Extract ALL transactions from this bank statement page.
+            count_hint = ""
+            if expected_count > 0:
+                count_hint = (
+                    f"\nThis page contains approximately {expected_count} transactions. "
+                    f"Extract ALL of them."
+                )
 
-OUTPUT: Return ONLY a valid JSON array. No markdown, no explanation.
+            prompt = f"""
+Extract ONLY bank transaction rows from the text below.
+
+STRICT RULES:
+- A valid transaction MUST start with a serial number AND a date (e.g. "1 14.03.2026")
+- Ignore EVERYTHING before the first such row
+- Ignore EVERYTHING after the last such row
+- Ignore sections like Legends, Abbreviations, Notes, Disclaimers completely
+- Ignore any lines that do NOT contain a date in format DD.MM.YYYY
+- Merge multi-line descriptions into a single line
+- Each transaction must include: date, description, debit/credit/amount
+
+OUTPUT FORMAT:
+Return ONLY a valid JSON array. No markdown, no explanation.
 
 Each object:
-- "transaction_date": "DD.MM.YYYY" format (keep original format from statement)
-- "description": full transaction description/narration
-- "debit": withdrawal amount as number (null if none)
-- "credit": deposit amount as number (null if none)
-- "amount": net amount as number (debit positive, credit negative)
+{{
+  "transaction_date": "YYYY-MM-DD",
+  "description": "clean single-line text",
+  "debit": number or null,
+  "credit": number or null,
+  "amount": number
+}}
 
-Include EVERY transaction row. Do not skip any.
+IMPORTANT:
+- If only one amount is present → treat as debit
+- Remove line breaks inside description
+- Remove extra spaces
+- Do NOT include balance column
+- Do NOT include legends or metadata
+- If unsure → SKIP the row
 
-Bank Statement Page:
-{page_text}"""
+TEXT:
+{page_text}
+"""
 
             response_text = _call_llm_with_retry(
                 prompt=prompt, retries=3, page_num=page_num
@@ -259,32 +333,56 @@ Bank Statement Page:
                 print(f"[LLM PARSER] Page {page_num}: no response")
                 continue
 
-            print(
-                f"[LLM PARSER] Page {page_num}: got {len(response_text)} chars response"
-            )
+            # Check for truncation (response near max output length)
+            if len(response_text) > 7000:
+                print(
+                    f"[LLM PARSER] Page {page_num}: response may be truncated "
+                    f"({len(response_text)} chars)"
+                )
 
             cleaned_json = _clean_llm_json_response(response_text)
 
             try:
                 transactions = json.loads(cleaned_json)
             except json.JSONDecodeError:
-                print(
-                    f"[LLM PARSER] Page {page_num}: JSON parse failed, trying fallback extraction"
-                )
                 transactions = _extract_json_objects(cleaned_json)
 
             if not isinstance(transactions, list):
                 print(f"[LLM PARSER] Page {page_num}: response is not a list, skipping")
                 continue
 
+            # Basic sanity filter: must have description + at least one amount
+            valid = []
             for txn in transactions:
-                if isinstance(txn, dict):
-                    all_transactions.append(txn)
+                if not isinstance(txn, dict):
+                    continue
+                desc = str(txn.get("description", "")).strip()
+                has_amount = any(
+                    isinstance(txn.get(k), (int, float)) and txn.get(k, 0) != 0
+                    for k in ("debit", "credit", "amount")
+                )
+                if desc and has_amount:
+                    valid.append(txn)
 
-            print(
-                f"[LLM PARSER] Page {page_num}: extracted {len(transactions)} transactions"
-            )
-            print(pd.DataFrame(transactions))
+            if not valid:
+                print(
+                    f"[LLM PARSER] Page {page_num}: 0 valid transactions "
+                    f"(raw: {len(transactions)})"
+                )
+                continue
+
+            # Sanity check: warn if count deviates significantly from expected
+            if (
+                expected_count > 0
+                and abs(len(valid) - expected_count) > expected_count * 0.5
+            ):
+                print(
+                    f"[LLM PARSER] Page {page_num}: count mismatch "
+                    f"(expected ~{expected_count}, got {len(valid)})"
+                )
+
+            all_transactions.extend(valid)
+            print(f"[LLM PARSER] Page {page_num}: {len(valid)} transactions")
 
     print(f"[LLM PARSER] Total transactions: {len(all_transactions)}")
 

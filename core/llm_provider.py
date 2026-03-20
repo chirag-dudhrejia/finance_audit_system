@@ -28,6 +28,7 @@ class LLMProviderManager:
             self._openrouter_client = OpenAI(
                 base_url="https://openrouter.ai/api/v1",
                 api_key=settings.OPENROUTER_API_KEY,
+                timeout=120.0,
             )
         return self._openrouter_client
 
@@ -58,6 +59,7 @@ class LLMProviderManager:
                 model=model or settings.OPENROUTER_MODEL,
                 temperature=temperature,
                 reasoning=reasoning,
+                max_output_tokens=max_output_tokens,
             )
         else:
             raise ValueError(f"Unknown provider: {provider}")
@@ -86,6 +88,7 @@ class LLMProviderManager:
         model: str,
         temperature: float,
         reasoning: bool = False,
+        max_output_tokens: int = 2048,
     ) -> str:
         client = self._get_openrouter_client()
 
@@ -97,10 +100,11 @@ class LLMProviderManager:
             model=model,
             messages=[{"role": "user", "content": prompt}],
             temperature=temperature,
+            max_tokens=max_output_tokens,
             extra_body=extra_body if extra_body else None,
         )
 
-        return response.choices[0].message.content
+        return response.choices[0].message.content or ""
 
 
 llm = LLMProviderManager()
