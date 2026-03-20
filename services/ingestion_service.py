@@ -44,6 +44,15 @@ class IngestionService:
         try:
             df = df.loc[:, ~df.columns.duplicated()]
             raw_data = df.to_dict(orient="records")
+            raw_data = [
+                {
+                    k: None
+                    if isinstance(v, float) and (math.isnan(v) or math.isinf(v))
+                    else v
+                    for k, v in rec.items()
+                }
+                for rec in raw_data
+            ]
             self.repo.insert_raw({"user_id": user_id, "raw_data": raw_data})
         except Exception as e:
             print(f"[INGESTION] Warning: Failed to insert raw data: {e}")
@@ -55,9 +64,17 @@ class IngestionService:
             txn_date = None
             if pd.notna(txn_date_raw):
                 try:
-                    parsed_date = pd.to_datetime(
-                        txn_date_raw, errors="coerce", dayfirst=True, format="mixed"
-                    )
+                    date_str = str(txn_date_raw).strip()
+                    if (
+                        len(date_str) == 10
+                        and date_str[4] == "-"
+                        and date_str[7] == "-"
+                    ):
+                        parsed_date = pd.to_datetime(date_str, format="%Y-%m-%d")
+                    else:
+                        parsed_date = pd.to_datetime(
+                            date_str, errors="coerce", dayfirst=True
+                        )
                     if pd.notna(parsed_date):
                         txn_date = parsed_date.date().isoformat()
                     else:
