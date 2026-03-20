@@ -135,6 +135,22 @@ st.markdown(
     background: #1e3a5f;
     color: white;
 }
+.scrollable {
+    max-height: 350px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+}
+.scrollable::-webkit-scrollbar {
+    width: 6px;
+}
+.scrollable::-webkit-scrollbar-track {
+    background: transparent;
+}
+.scrollable::-webkit-scrollbar-thumb {
+    background-color: #cbd5e1;
+    border-radius: 3px;
+}
 </style>
 """,
     unsafe_allow_html=True,
@@ -309,7 +325,7 @@ st.html(savings_html)
 
 st.markdown("---")
 
-col1, col2 = st.columns([2, 1])
+col1, col2 = st.columns([14, 8])
 
 merch = insights["merchants"]
 
@@ -333,6 +349,7 @@ with col1:
         <h3 style="margin: 0 0 1.5rem 0; font-size: 1.15rem; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 0.75rem; padding-bottom: 1rem; border-bottom: 1px solid #e2e8f0;">
             📊 Spending by Category
         </h3>
+        <div class="scrollable">
     """
 
     if merch["by_category"]:
@@ -362,7 +379,10 @@ with col1:
         <p style="color: #64748b; text-align: center; padding: 2rem;">No categorized transactions found</p>
         """
 
-    cat_html += "</div>"
+    cat_html += """
+        </div>
+    </div>
+    """
     st.html(cat_html)
 
 with col2:
@@ -371,10 +391,11 @@ with col2:
         <h3 style="margin: 0 0 1.5rem 0; font-size: 1.15rem; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 0.75rem; padding-bottom: 1rem; border-bottom: 1px solid #e2e8f0;">
             🏆 Top Merchants
         </h3>
-    """
+        <div class="scrollable">
+        """
 
     if merch["top_merchants"]:
-        for i, m in enumerate(merch["top_merchants"][:5], 1):
+        for i, m in enumerate(merch["top_merchants"][:10], 1):
             badge_color = (
                 "#f59e0b"
                 if i == 1
@@ -391,7 +412,7 @@ with col2:
                     <div style="font-weight: 600; font-size: 0.95rem; color: #1e293b;">{m["name"]}</div>
                     <div style="font-size: 0.8rem; color: #94a3b8;">{m["txn_count"]} transactions</div>
                 </div>
-                <div style="font-weight: 700; font-size: 1rem; color: #1e293b;">₹{m["total_spend"]:,.0f}</div>
+                <div style="font-weight: 700; font-size: 1rem; color: #1e293b; padding-right: 8px;">₹{m["total_spend"]:,.0f}</div>
             </div>
             """
     else:
@@ -399,7 +420,10 @@ with col2:
         <p style="color: #94a3b8; text-align: center; padding: 2rem;">No merchant data available</p>
         """
 
-    merch_html += "</div>"
+    merch_html += """
+        </div>
+    </div>
+    """
     st.html(merch_html)
 
 st.markdown("---")
