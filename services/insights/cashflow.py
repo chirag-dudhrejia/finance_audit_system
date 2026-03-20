@@ -6,14 +6,13 @@ def compute(transactions: list[dict]) -> dict:
     expenses = 0.0
 
     for txn in transactions:
-        amount = txn.get("amount")
-        if amount is None:
-            continue
-        amount = float(amount)
-        if amount > 0:
-            income += amount
-        else:
-            expenses += abs(amount)
+        credit = txn.get("credit")
+        debit = txn.get("debit")
+
+        if credit is not None and float(credit) > 0:
+            income += float(credit)
+        elif debit is not None and float(debit) > 0:
+            expenses += float(debit)
 
     savings = income - expenses
 
