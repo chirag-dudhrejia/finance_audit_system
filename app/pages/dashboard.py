@@ -368,7 +368,7 @@ st.html(
     </div>
     
     <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem;">
-        <div class="metric-card" style="--accent-color: rgba(5,150,105,0.1);">
+        <div class="metric-card" style="--accent-color: rgba(5,150,105,0.1); border: 1px solid #05966930;">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
                 <div style="display: flex; align-items: center; gap: 0.625rem;">
                     <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #059669 0%, #047857 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(5,150,105,0.3); color: #ffffff;">
@@ -382,7 +382,7 @@ st.html(
             <div style="font-size: 0.75rem; color: #64748b;">Total credits</div>
         </div>
         
-        <div class="metric-card" style="--accent-color: rgba(220,38,38,0.1);">
+        <div class="metric-card" style="--accent-color: rgba(220,38,38,0.1); border: 1px solid #dc262630;">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
                 <div style="display: flex; align-items: center; gap: 0.625rem;">
                     <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(220,38,38,0.3); color: #ffffff;">
@@ -396,7 +396,7 @@ st.html(
             <div style="font-size: 0.75rem; color: #64748b;">Total debits</div>
         </div>
         
-        <div class="metric-card" style="--accent-color: rgba(8,145,178,0.1);">
+        <div class="metric-card" style="--accent-color: rgba(8,145,178,0.1); border: 1px solid #0891b230;">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
                 <div style="display: flex; align-items: center; gap: 0.625rem;">
                     <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(8,145,178,0.3); color: #ffffff;">
@@ -410,7 +410,7 @@ st.html(
             <div style="font-size: 0.75rem; color: #64748b;">Net balance</div>
         </div>
         
-        <div class="metric-card" style="--accent-color: rgba(124,58,237,0.1);">
+        <div class="metric-card" style="--accent-color: rgba(124,58,237,0.1); border: 1px solid #7c3aed30;">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
                 <div style="display: flex; align-items: center; gap: 0.625rem;">
                     <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(124,58,237,0.3); color: #ffffff;">
@@ -453,44 +453,25 @@ savings_message = (
 
 st.html(
     f"""
-<div class="enterprise-card" style="padding: 1.5rem; margin-bottom: 1.5rem;">
-    <div style="display: grid; grid-template-columns: 1fr auto; gap: 2rem; align-items: center;">
+<div class="enterprise-card" style="padding: 1rem; margin-bottom: 1.5rem;">
+    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+        <div style="width: 36px; height: 36px; background: linear-gradient(135deg, {savings_color} 0%, {savings_color}dd 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #ffffff;">
+            {DASH_ICONS["dollar"]}
+        </div>
         <div>
-            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem;">
-                <div style="width: 44px; height: 44px; background: linear-gradient(135deg, {savings_color} 0%, {savings_color}dd 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px {savings_color}30; color: #ffffff;">
-                    {DASH_ICONS["dollar"]}
-                </div>
-                <div>
-                    <h3 style="margin: 0; font-size: 1rem; font-weight: 600; color: #0f172a;">Savings Rate</h3>
-                    <p style="margin: 2px 0 0 0; font-size: 0.75rem; color: #64748b;">{savings_message}</p>
-                </div>
-            </div>
-            <div style="margin-bottom: 1rem;">
-                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                    <span style="font-size: 0.8125rem; color: #64748b; font-weight: 500;">Progress to Goal</span>
-                    <span style="font-size: 0.875rem; font-weight: 600; color: {savings_color};">{cf["savings_rate"]}%</span>
-                </div>
-                <div style="background: #e2e8f0; border-radius: 8px; height: 10px; overflow: hidden;">
-                    <div style="width: {progress_pct}%; background: linear-gradient(90deg, {savings_color}, {savings_color}cc); height: 100%; border-radius: 8px;"></div>
-                </div>
-            </div>
-            <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; background: {savings_color}10; border-radius: 8px; border: 1px solid {savings_color}30;">
-                <div style="color: {savings_color};">{DASH_ICONS["check"]}</div>
-                <span style="font-size: 0.8125rem; font-weight: 500; color: {savings_color};">Status: {savings_status}</span>
-            </div>
+            <div style="font-size: 0.9375rem; font-weight: 600; color: #0f172a;">Savings Rate</div>
+            <div style="font-size: 0.75rem; color: #64748b; margin-top: 1px;">{savings_message}</div>
         </div>
-        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1.5rem; background: linear-gradient(135deg, {savings_color}08 0%, {savings_color}05 100%); border-radius: 16px; border: 2px solid {savings_color}20; min-width: 140px;">
-            <div style="position: relative; width: 100px; height: 100px;">
-                <svg viewBox="0 0 100 100" style="transform: rotate(-90deg);">
-                    <circle cx="50" cy="50" r="42" fill="none" stroke="#e2e8f0" stroke-width="10"/>
-                    <circle cx="50" cy="50" r="42" fill="none" stroke="{savings_color}" stroke-width="10" stroke-dasharray="{264 if progress_pct >= 100 else str(int(264 * progress_pct / 100))} 264" stroke-linecap="round"/>
-                </svg>
-                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
-                    <div style="font-size: 1.375rem; font-weight: 700; color: {savings_color};">{cf["savings_rate"]}%</div>
-                </div>
-            </div>
-            <div style="margin-top: 0.75rem; font-size: 0.6875rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600;">Savings Rate</div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem;">
+        <div style="flex: 1; background: #e2e8f0; border-radius: 8px; height: 28px; overflow: hidden;">
+            <div style="width: {progress_pct}%; background: linear-gradient(90deg, {savings_color}, {savings_color}cc); height: 100%; border-radius: 8px;"></div>
         </div>
+        <span style="font-size: 1.125rem; font-weight: 700; color: {savings_color}; flex-shrink: 0;">{cf["savings_rate"]}%</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+        <div style="color: {savings_color};">{DASH_ICONS["check"]}</div>
+        <span style="font-size: 0.8125rem; font-weight: 500; color: {savings_color};">Status: {savings_status}</span>
     </div>
 </div>
 """,
@@ -664,7 +645,7 @@ with lk_col:
             if c in lk_df.columns
         ]
         with st.expander(
-            f"{DASH_ICONS['file']} View {lk['small_txn_count']} Records",
+            f"📄 View {lk['small_txn_count']} Records",
             expanded=False,
         ):
             if display_cols:
@@ -702,7 +683,7 @@ with rec_col:
         st.html(rec_html)
         rec_df = pd.DataFrame(rec["recurring_payments"])
         with st.expander(
-            f"{DASH_ICONS['credit_card']} View {rec['count']} Payments",
+            f"💳 View {rec['count']} Payments",
             expanded=False,
         ):
             display_df = rec_df.rename(
@@ -728,19 +709,31 @@ with rec_col:
     """
         st.html(rec_html)
 
-st.markdown("---")
-
 bh = insights["behavior"]
 
-view = st.radio(
-    "View spending by",
-    ["Day of Week", "Month"],
-    horizontal=True,
-    index=0,
-    key="behavior_view",
+st.html(
+    f"""
+<div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #ffffff;">
+            {DASH_ICONS["bar_chart"]}
+        </div>
+        <div>
+            <div style="font-size: 0.9375rem; font-weight: 600; color: #0f172a;">Spending Behavior</div>
+            <div style="font-size: 0.75rem; color: #64748b; margin-top: 1px;">Analyze your spending patterns</div>
+        </div>
+    </div>
+</div>
+"""
 )
 
-st.markdown("---")
+view = st.segmented_control(
+    "View spending by",
+    ["Day of Week", "Month"],
+    default="Day of Week",
+    key="behavior_view",
+    label_visibility="collapsed",
+)
 
 if view == "Day of Week":
     daily = bh["daily"]
@@ -765,7 +758,7 @@ if view == "Day of Week":
         </div>
         
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
-            <div class="metric-card" style="--accent-color: rgba(5,150,105,0.1);">
+            <div class="metric-card" style="--accent-color: rgba(5,150,105,0.1); border: 1px solid #05966930;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.875rem;">
                     <div style="display: flex; align-items: center; gap: 0.625rem;">
                         <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #059669 0%, #047857 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(5,150,105,0.3);">
@@ -778,7 +771,7 @@ if view == "Day of Week":
                 <div style="font-size: 0.75rem; color: #64748b;">Mon - Fri average</div>
             </div>
             
-            <div class="metric-card" style="--accent-color: rgba(217,119,6,0.1);">
+            <div class="metric-card" style="--accent-color: rgba(217,119,6,0.1); border: 1px solid #d9770630;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.875rem;">
                     <div style="display: flex; align-items: center; gap: 0.625rem;">
                         <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #d97706 0%, #b45309 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(217,119,6,0.3);">
@@ -791,7 +784,7 @@ if view == "Day of Week":
                 <div style="font-size: 0.75rem; color: #64748b;">Sat - Sun average</div>
             </div>
             
-            <div class="metric-card" style="--accent-color: rgba(8,145,178,0.1);">
+            <div class="metric-card" style="--accent-color: rgba(8,145,178,0.1); border: 1px solid #0891b230;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.875rem;">
                     <div style="display: flex; align-items: center; gap: 0.625rem;">
                         <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(8,145,178,0.3);">
@@ -902,7 +895,7 @@ else:
         </div>
         
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem;">
-            <div class="metric-card" style="--accent-color: rgba(8,145,178,0.1);">
+            <div class="metric-card" style="--accent-color: rgba(8,145,178,0.1); border: 1px solid #0891b230;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.875rem;">
                     <div style="display: flex; align-items: center; gap: 0.625rem;">
                         <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(8,145,178,0.3);">
@@ -915,7 +908,7 @@ else:
                 <div style="font-size: 0.75rem; color: #64748b;">Average spend</div>
             </div>
             
-            <div class="metric-card" style="--accent-color: {trend_color}10;">
+            <div class="metric-card" style="--accent-color: {trend_color}10; border: 1px solid {trend_color}30;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.875rem;">
                     <div style="display: flex; align-items: center; gap: 0.625rem;">
                         <div style="width: 36px; height: 36px; background: linear-gradient(135deg, {trend_color} 0%, {trend_color}dd 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px {trend_color}30;">
@@ -928,7 +921,7 @@ else:
                 <div style="font-size: 0.75rem; color: #64748b;">{"+" if monthly["trend_pct"] > 0 else ""}{monthly["trend_pct"]:.1f}% change</div>
             </div>
             
-            <div class="metric-card" style="--accent-color: rgba(100,116,139,0.1);">
+            <div class="metric-card" style="--accent-color: rgba(100,116,139,0.1); border: 1px solid #64748b30;">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.875rem;">
                     <div style="display: flex; align-items: center; gap: 0.625rem;">
                         <div style="width: 36px; height: 36px; background: linear-gradient(135deg, #64748b 0%, #475569 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(100,116,139,0.3);">
