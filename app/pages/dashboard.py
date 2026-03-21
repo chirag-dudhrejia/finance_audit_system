@@ -6,6 +6,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
 import streamlit as st
 import pandas as pd
+import plotly.express as px
 from data.repositories.transaction_repo import TransactionRepo
 from services.insights import generate_insights
 from components.ui import apply_theme
@@ -501,223 +502,224 @@ with col2:
         <p style="color: #94a3b8; text-align: center; padding: 2rem;">No recurring payments detected (need more data)</p>
         </div>
     """
-    st.html(rec_html)
+        st.html(rec_html)
 
 st.markdown("---")
 
 bh = insights["behavior"]
 
-behavior_html = f"""
-<div style="background: white; border-radius: 16px; border: 1px solid #e2e8f0; padding: 1.75rem; margin-bottom: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
-    <h3 style="margin: 0 0 1.5rem 0; font-size: 1.15rem; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 0.75rem; padding-bottom: 1rem; border-bottom: 1px solid #e2e8f0;">
-        📈 Spending Behavior
-    </h3>
-"""
-st.html(behavior_html)
-
 view = st.radio(
     "View spending by",
-    ["Day of Week", "Month"],
+    ["📅 Day of Week", "📆 Month"],
     horizontal=True,
+    index=0,
     key="behavior_view",
 )
 
-if view == "Day of Week":
+st.markdown("---")
+
+if view == "📅 Day of Week":
     daily = bh["daily"]
 
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        st.markdown(
-            f"""
-        <div style="background: white; border-radius: 12px; padding: 1.5rem; border: 1px solid #e2e8f0; position: relative; overflow: hidden; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);">
-            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #10b981;"></div>
-            <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.5rem;">Weekday Average</div>
-            <div style="font-size: 1.75rem; font-weight: 700; color: #1e293b;">₹{daily["avg_weekday"]:,.0f}</div>
-            <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.25rem;">Mon - Fri average</div>
+    st.html(f"""
+    <div style="background: white; border-radius: 16px; border: 1px solid #e2e8f0; padding: 1.75rem; margin-bottom: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid #f1f5f9;">
+            <h3 style="margin: 0; font-size: 1.15rem; font-weight: 700; color: #1e293b;">📈 Spending Behavior</h3>
+            <span style="background: #eff6ff; color: #1e40af; padding: 0.4rem 1rem; border-radius: 50px; font-size: 0.8rem; font-weight: 600;">Day of Week</span>
         </div>
-        """,
-            unsafe_allow_html=True,
-        )
-
-    with col2:
-        st.markdown(
-            f"""
-        <div style="background: white; border-radius: 12px; padding: 1.5rem; border: 1px solid #e2e8f0; position: relative; overflow: hidden; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);">
-            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #f59e0b;"></div>
-            <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.5rem;">Weekend Average</div>
-            <div style="font-size: 1.75rem; font-weight: 700; color: #1e293b;">₹{daily["avg_weekend"]:,.0f}</div>
-            <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.25rem;">Sat - Sun average</div>
+        
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-bottom: 1.5rem;">
+            <div style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border-radius: 12px; padding: 1.25rem; text-align: center;">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">💼</div>
+                <div style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #059669; margin-bottom: 0.5rem;">Weekday Avg</div>
+                <div style="font-size: 1.5rem; font-weight: 700; color: #065f46;">₹{daily["avg_weekday"]:,.0f}</div>
+                <div style="font-size: 0.75rem; color: #34d399; margin-top: 0.25rem;">Mon - Fri</div>
+            </div>
+            <div style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border-radius: 12px; padding: 1.25rem; text-align: center;">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">🌴</div>
+                <div style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #d97706; margin-bottom: 0.5rem;">Weekend Avg</div>
+                <div style="font-size: 1.5rem; font-weight: 700; color: #92400e;">₹{daily["avg_weekend"]:,.0f}</div>
+                <div style="font-size: 0.75rem; color: #fbbf24; margin-top: 0.25rem;">Sat - Sun</div>
+            </div>
+            <div style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-radius: 12px; padding: 1.25rem; text-align: center;">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">📅</div>
+                <div style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #2563eb; margin-bottom: 0.5rem;">Peak Day</div>
+                <div style="font-size: 1.5rem; font-weight: 700; color: #1e40af;">{daily["peak_day"]}</div>
+                <div style="font-size: 0.75rem; color: #60a5fa; margin-top: 0.25rem;">Highest spending</div>
+            </div>
         </div>
-        """,
-            unsafe_allow_html=True,
-        )
-
-    with col3:
-        st.markdown(
-            f"""
-        <div style="background: white; border-radius: 12px; padding: 1.5rem; border: 1px solid #e2e8f0; position: relative; overflow: hidden; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);">
-            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #3b82f6;"></div>
-            <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.5rem;">Peak Spending Day</div>
-            <div style="font-size: 1.75rem; font-weight: 700; color: #1e293b;">{daily["peak_day"]}</div>
-            <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.25rem;">Highest spending day</div>
-        </div>
-        """,
-            unsafe_allow_html=True,
-        )
+    """)
 
     if daily["weekend_multiplier"] > 0:
         multiplier = daily["weekend_multiplier"]
         is_high = multiplier > 1.2
-        alert_bg = "#fffbeb" if is_high else "#ecfdf5"
-        alert_border = "#fde68a" if is_high else "#a7f3d0"
-        alert_color = "#92400e" if is_high else "#065f46"
+        bg = "#fef2f2" if is_high else "#f0fdf4"
+        border = "#fca5a5" if is_high else "#86efac"
+        icon = "⚠️" if is_high else "✅"
+        color = "#dc2626" if is_high else "#16a34a"
         msg = (
             "This is significantly higher than weekdays."
             if is_high
             else "Your weekend spending is well-controlled."
         )
-        st.markdown(
-            f"""
-        <div style="background: {alert_bg}; border: 1px solid {alert_border}; border-radius: 12px; padding: 1.25rem; margin-top: 1rem;">
-            <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem; font-weight: 600; color: {alert_color};">📊 Weekend Spending Analysis</h4>
-            <p style="margin: 0; font-size: 0.875rem; color: #64748b;">
-                Your weekend spending is <strong>{multiplier}x</strong> your weekday average.
-                {msg}
-            </p>
+
+        st.html(f"""
+        <div style="background: {bg}; border: 1px solid {border}; border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+            <div style="font-size: 1.5rem;">{icon}</div>
+            <div style="font-size: 0.875rem; color: {color};">
+                Weekend spending is <strong>{multiplier}x</strong> your weekday average. {msg}
+            </div>
         </div>
-        """,
-            unsafe_allow_html=True,
-        )
+        """)
 
     if any(v > 0 for v in daily["chart"].values()):
         chart_df = pd.DataFrame(
             {"Day": list(daily["chart"].keys()), "Spend": list(daily["chart"].values())}
         )
-        st.bar_chart(chart_df.set_index("Day")["Spend"])
+        colors = [
+            "#10b981"
+            if d in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+            else "#f59e0b"
+            for d in chart_df["Day"]
+        ]
+        fig = px.bar(
+            chart_df,
+            x="Day",
+            y="Spend",
+            color=colors,
+            text_auto=True,
+        )
+        fig.update_layout(
+            margin=dict(l=10, r=10, t=20, b=50),
+            yaxis=dict(
+                title=None,
+                tickprefix="₹",
+                tickformat=",.0f",
+                rangemode="tozero",
+                automargin=True,
+            ),
+            xaxis=dict(title=None, tickangle=0),
+            showlegend=False,
+            height=320,
+            plot_bgcolor="white",
+            paper_bgcolor="white",
+        )
+        fig.update_traces(textposition="outside", texttemplate="₹%{y:,.0f}")
+        st.plotly_chart(fig, use_container_width=True)
 
 else:
     monthly = bh["monthly"]
+    trend_icon = (
+        "📈"
+        if monthly["trend"] == "increasing"
+        else "📉"
+        if monthly["trend"] == "decreasing"
+        else "➡️"
+    )
+    trend_bg = (
+        "#ecfdf5"
+        if monthly["trend"] == "increasing"
+        else "#fef2f2"
+        if monthly["trend"] == "decreasing"
+        else "#f8fafc"
+    )
+    trend_color = (
+        "#059669"
+        if monthly["trend"] == "increasing"
+        else "#dc2626"
+        if monthly["trend"] == "decreasing"
+        else "#64748b"
+    )
 
-    col1, col2, col3 = st.columns(3)
-
-    with col1:
-        st.markdown(
-            f"""
-        <div style="background: white; border-radius: 12px; padding: 1.5rem; border: 1px solid #e2e8f0; position: relative; overflow: hidden; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);">
-            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #3b82f6;"></div>
-            <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.5rem;">Avg Monthly Spend</div>
-            <div style="font-size: 1.75rem; font-weight: 700; color: #1e293b;">₹{monthly["avg_monthly_spend"]:,.0f}</div>
+    st.html(
+        f"""
+    <div style="background: white; border-radius: 16px; border: 1px solid #e2e8f0; padding: 1.75rem; margin-bottom: 1.5rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid #f1f5f9;">
+            <h3 style="margin: 0; font-size: 1.15rem; font-weight: 700; color: #1e293b;">📈 Spending Behavior</h3>
+            <span style="background: #f5f3ff; color: #7c3aed; padding: 0.4rem 1rem; border-radius: 50px; font-size: 0.8rem; font-weight: 600;">Month</span>
         </div>
-        """,
-            unsafe_allow_html=True,
-        )
-
-    with col2:
-        trend_color = (
-            "#10b981"
-            if monthly["trend"] == "increasing"
-            else "#ef4444"
-            if monthly["trend"] == "decreasing"
-            else "#64748b"
-        )
-        st.markdown(
-            f"""
-        <div style="background: white; border-radius: 12px; padding: 1.5rem; border: 1px solid #e2e8f0; position: relative; overflow: hidden; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);">
-            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: {trend_color};"></div>
-            <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.5rem;">Spending Trend</div>
-            <div style="font-size: 1.75rem; font-weight: 700; color: #1e293b;">{monthly["trend"].capitalize()}</div>
-            <div style="font-size: 0.8rem; color: #94a3b8; margin-top: 0.25rem;">{"+" if monthly["trend_pct"] > 0 else ""}{monthly["trend_pct"]:.1f}% change</div>
+        
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; margin-bottom: 1.5rem;">
+            <div style="background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); border-radius: 12px; padding: 1.25rem; text-align: center;">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">💰</div>
+                <div style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #2563eb; margin-bottom: 0.5rem;">Avg Monthly</div>
+                <div style="font-size: 1.5rem; font-weight: 700; color: #1e40af;">₹{monthly["avg_monthly_spend"]:,.0f}</div>
+            </div>
+            <div style="background: linear-gradient(135deg, {trend_bg} 0%, {trend_bg} 100%); border-radius: 12px; padding: 1.25rem; text-align: center;">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">{trend_icon}</div>
+                <div style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: {trend_color}; margin-bottom: 0.5rem;">Trend</div>
+                <div style="font-size: 1.5rem; font-weight: 700; color: {trend_color}; text-transform: capitalize;">{monthly["trend"]}</div>
+                <div style="font-size: 0.75rem; color: {trend_color}; margin-top: 0.25rem;">{"+" if monthly["trend_pct"] > 0 else ""}{monthly["trend_pct"]:.1f}% change</div>
+            </div>
+            <div style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); border-radius: 12px; padding: 1.25rem; text-align: center;">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">📆</div>
+                <div style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.5rem;">Months</div>
+                <div style="font-size: 1.5rem; font-weight: 700; color: #475569;">{monthly["total_months"]}</div>
+                <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 0.25rem;">Tracked</div>
+            </div>
         </div>
-        """,
-            unsafe_allow_html=True,
-        )
-
-    with col3:
-        st.markdown(
-            f"""
-        <div style="background: white; border-radius: 12px; padding: 1.5rem; border: 1px solid #e2e8f0; position: relative; overflow: hidden; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);">
-            <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #64748b;"></div>
-            <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 0.5rem;">Months Tracked</div>
-            <div style="font-size: 1.75rem; font-weight: 700; color: #1e293b;">{monthly["total_months"]}</div>
-        </div>
-        """,
-            unsafe_allow_html=True,
-        )
+    """
+    )
 
     if monthly["highest_month"]["spend"] > 0 or monthly["lowest_month"]["spend"] > 0:
-        col1, col2 = st.columns(2)
-        with col1:
-            st.markdown(
-                f"""
-            <div style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 1.25rem; margin-top: 1rem;">
-                <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem; font-weight: 600; color: #92400e;">📈 Highest Month</h4>
-                <p style="margin: 0; font-size: 0.875rem; color: #64748b;">
-                    <strong>{monthly["highest_month"]["label"]}</strong> with 
-                    <strong>₹{monthly["highest_month"]["spend"]:,.0f}</strong> in spending
-                </p>
+        st.html(
+            f"""
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+            <div style="background: #fef3c7; border-radius: 12px; padding: 1rem 1.25rem; display: flex; align-items: center; gap: 0.75rem;">
+                <div style="font-size: 1.5rem;">📈</div>
+                <div>
+                    <div style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: #d97706;">Highest Month</div>
+                    <div style="font-size: 0.9rem; color: #92400e;"><strong>{monthly["highest_month"]["label"]}</strong> • ₹{monthly["highest_month"]["spend"]:,.0f}</div>
+                </div>
             </div>
-            """,
-                unsafe_allow_html=True,
-            )
-        with col2:
-            st.markdown(
-                f"""
-            <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 12px; padding: 1.25rem; margin-top: 1rem;">
-                <h4 style="margin: 0 0 0.5rem 0; font-size: 0.95rem; font-weight: 600; color: #065f46;">📉 Lowest Month</h4>
-                <p style="margin: 0; font-size: 0.875rem; color: #64748b;">
-                    <strong>{monthly["lowest_month"]["label"]}</strong> with 
-                    <strong>₹{monthly["lowest_month"]["spend"]:,.0f}</strong> in spending
-                </p>
+            <div style="background: #d1fae5; border-radius: 12px; padding: 1rem 1.25rem; display: flex; align-items: center; gap: 0.75rem;">
+                <div style="font-size: 1.5rem;">📉</div>
+                <div>
+                    <div style="font-size: 0.7rem; font-weight: 600; text-transform: uppercase; color: #059669;">Lowest Month</div>
+                    <div style="font-size: 0.9rem; color: #065f46;"><strong>{monthly["lowest_month"]["label"]}</strong> • ₹{monthly["lowest_month"]["spend"]:,.0f}</div>
+                </div>
             </div>
-            """,
-                unsafe_allow_html=True,
-            )
+        </div>
+        """
+        )
 
     if monthly["mom_growth"]:
-        st.markdown(
+        st.html(
             """
-        <h4 style="margin-top: 1.5rem; margin-bottom: 1rem; color: #1e293b; font-size: 1rem; font-weight: 600;">
-            Month-over-Month Growth
-        </h4>
-        """,
-            unsafe_allow_html=True,
+        <h4 style="margin: 0 0 1rem 0; font-size: 0.95rem; font-weight: 600; color: #475569;">Month-over-Month Growth</h4>
+        """
         )
 
         mom_df = pd.DataFrame(monthly["mom_growth"])
         mom_df["growth_display"] = mom_df["growth_pct"].apply(
             lambda x: (
-                f'<span style="color: {"#10b981" if x >= 0 else "#ef4444"};">{"+" if x >= 0 else ""}{x:.1f}%</span>'
+                f'<span style="color: {"#10b981" if x >= 0 else "#ef4444"}; font-weight: 600;">{"+" if x >= 0 else ""}{x:.1f}%</span>'
             )
         )
-        mom_df["spend_display"] = mom_df["spend"].apply(lambda x: f"₹{x:,.0f}")
 
         table_html = """
-        <table style="width: 100%; border-collapse: collapse; margin-top: 1rem; background: #f8fafc; border-radius: 8px; overflow: hidden;">
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; background: #f8fafc; border-radius: 12px; overflow: hidden;">
             <thead>
-                <tr style="background: #e2e8f0;">
-                    <th style="padding: 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #475569; text-transform: uppercase;">Month</th>
-                    <th style="padding: 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #475569; text-transform: uppercase;">Previous</th>
-                    <th style="padding: 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #475569; text-transform: uppercase;">Spend</th>
-                    <th style="padding: 1rem; text-align: left; font-size: 0.75rem; font-weight: 600; color: #475569; text-transform: uppercase;">Change</th>
+                <tr style="background: #f1f5f9;">
+                    <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #64748b; text-transform: uppercase;">Month</th>
+                    <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #64748b; text-transform: uppercase;">Previous</th>
+                    <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #64748b; text-transform: uppercase;">Spend</th>
+                    <th style="padding: 0.75rem 1rem; text-align: left; font-size: 0.7rem; font-weight: 600; color: #64748b; text-transform: uppercase;">Change</th>
                 </tr>
             </thead>
             <tbody>
         """
-
         for _, row in mom_df.iterrows():
             table_html += f"""
                 <tr style="border-bottom: 1px solid #e2e8f0;">
-                    <td style="padding: 1rem; font-size: 0.9rem; color: #1e293b;">{row["month"]}</td>
-                    <td style="padding: 1rem; font-size: 0.9rem; color: #1e293b;">{row["prev_month"]}</td>
-                    <td style="padding: 1rem; font-size: 0.9rem; color: #1e293b;">{row["spend_display"]}</td>
-                    <td style="padding: 1rem; font-size: 0.9rem;">{row["growth_display"]}</td>
+                    <td style="padding: 0.75rem 1rem; font-size: 0.85rem; color: #1e293b;">{row["month"]}</td>
+                    <td style="padding: 0.75rem 1rem; font-size: 0.85rem; color: #64748b;">{row["prev_month"]}</td>
+                    <td style="padding: 0.75rem 1rem; font-size: 0.85rem; color: #1e293b;">₹{row["spend"]:,.0f}</td>
+                    <td style="padding: 0.75rem 1rem; font-size: 0.85rem;">{row["growth_display"]}</td>
                 </tr>
             """
-
         table_html += "</tbody></table>"
-
-        st.markdown(table_html, unsafe_allow_html=True)
+        st.html(table_html)
 
     if monthly["chart"]:
         chart_df = pd.DataFrame(
@@ -726,9 +728,30 @@ else:
                 "Spend": list(monthly["chart"].values()),
             }
         )
-        st.bar_chart(chart_df.set_index("Month")["Spend"])
-
-st.html("</div>")
+        fig = px.bar(
+            chart_df,
+            x="Month",
+            y="Spend",
+            text_auto=True,
+            color_discrete_sequence=["#8b5cf6"],
+        )
+        fig.update_layout(
+            margin=dict(l=10, r=10, t=20, b=50),
+            yaxis=dict(
+                title=None,
+                tickprefix="₹",
+                tickformat=",.0f",
+                rangemode="tozero",
+                automargin=True,
+            ),
+            xaxis=dict(title=None, tickangle=0),
+            showlegend=False,
+            height=320,
+            plot_bgcolor="white",
+            paper_bgcolor="white",
+        )
+        fig.update_traces(textposition="outside", texttemplate="₹%{y:,.0f}")
+        st.plotly_chart(fig, use_container_width=True)
 
 st.markdown("---")
 
