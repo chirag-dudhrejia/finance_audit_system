@@ -1,4 +1,5 @@
 from agents.categorizer_agent import categorize_batch_llm
+from core.config import settings
 
 RULES = {
     # Food & Dining
@@ -106,6 +107,9 @@ class CategorizationService:
         to the LLM in a single call. Failed chunks are retried
         with exponential backoff.
 
+        If CATEGORIZATION_LLM_ENABLED is False, all fallback
+        transactions are marked as "Uncategorized" without LLM calls.
+
         Args:
             descriptions: List of transaction descriptions that didn't match rules.
 
@@ -114,6 +118,13 @@ class CategorizationService:
         """
         if not descriptions:
             return []
+
+        # If LLM is disabled, mark all as Uncategorized
+        if not settings.CATEGORIZATION_LLM_ENABLED:
+            print(
+                "[CATEGORIZATION] LLM fallback disabled. Marking all as Uncategorized."
+            )
+            return ["Uncategorized"] * len(descriptions)
 
         # Pre-process: extract UPI names where applicable
         processed = []
@@ -126,7 +137,7 @@ class CategorizationService:
                 processed.append(desc)
 
         # Chunk and categorize
-        chunk_size = 30
+        chunk_size = 15
         all_results = []
         for i in range(0, len(processed), chunk_size):
             chunk = processed[i : i + chunk_size]
