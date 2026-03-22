@@ -62,18 +62,21 @@ def get_css():
     background-color: {BG_PRIMARY};
 }}
 
+.stAppHeader {{
+    height: 3rem;
+    min-height: 3rem;
+}}
+
+.stMainBlockContainer {{
+    padding-top: 2.2rem;
+}}
+
 /* Sidebar */
 [data-testid="stSidebar"] {{
-    background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%) !important;
-    padding: 1rem;
-}}
-
-.st-emotion-cache-zy6yx3 {{
-    padding-top: 2rem !important;
-}}
-
-[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] {{
-    color: white;
+    background: #e2e8f0 !important;
+    border-right: 1px solid #ddd6fe !important;
+    padding: 1.25rem 1rem;
+    font-family: {FONT_FAMILY};
 }}
 
 [data-testid="stSidebarHeader"] {{
@@ -91,79 +94,31 @@ def get_css():
     display: none !important;
 }}
 
-/* Hide default Streamlit sidebar navigation */
+/* Style Streamlit sidebar navigation */
 [data-testid="stSidebarNav"] {{
-    display: none !important;
-}}
-
-/* Sidebar brand section */
-.sidebar-brand {{
-    text-align: center;
-    padding: 0rem 1rem;
-    margin: 0;
-    background: rgba(255,255,255,0.05);
-    border-radius: 16px;
-    border: 1px solid rgba(255,255,255,0.08);
-}}
-.sidebar-brand .logo {{
-    font-size: 2.5rem;
+    margin-top: 0.5rem;
     margin-bottom: 0.5rem;
 }}
-.sidebar-brand h1 {{
-    font-size: 1.25rem !important;
-    font-weight: 700 !important;
-    color: white !important;
-    margin: 0 !important;
+[data-testid="stSidebarNav"] button {{
+    display: none;
 }}
-.sidebar-brand p {{
-    font-size: 0.75rem !important;
-    color: rgba(148, 163, 184, 0.7) !important;
-    margin: 0.25rem 0 0 0 !important;
+a[data-testid="stSidebarNavLink"] {{
+    padding: 0.625rem 0.75rem !important;
+    border-radius: 8px !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    color: #475569 !important;
+    transition: all 0.2s ease !important;
+    border: 1px solid transparent !important;
+    margin-bottom: 2px !important;
 }}
-
-/* Section titles */
-.sidebar-section-title {{
-    font-size: 0.65rem !important;
-    font-weight: 600 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.12em !important;
-    color: rgba(148, 163, 184, 0.5) !important;
-    padding: 1rem 0.75rem 0.25rem !important;
-    margin: 0 !important;
+a[data-testid="stSidebarNavLink"]:hover {{
+    background: #ede9fe !important;
+    color: #4338ca !important;
+    border-color: #ddd6fe !important;
 }}
-
-/* Dividers */
-.sidebar-divider {{
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-    margin: 0.75rem 0;
-}}
-
-/* Stats card */
-.sidebar-stats {{
-    background: rgba(255,255,255,0.04);
-    border-radius: 12px;
-    padding: 1rem;
-    margin: 0.5rem 0;
-}}
-.sidebar-stats .stat-row {{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.4rem 0;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-}}
-.sidebar-stats .stat-row:last-child {{
-    border-bottom: none;
-}}
-.sidebar-stats .stat-label {{
-    font-size: 0.75rem;
-    color: rgba(148, 163, 184, 0.8);
-}}
-.sidebar-stats .stat-value {{
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: white;
+a[data-testid="stSidebarNavLink"] span {{
+    font-weight: 500 !important;
 }}
 
 /* Headers */
@@ -383,22 +338,6 @@ h1, h2, h3, h4, h5, h6 {{
 .upload-zone.dragover {{
     border-color: {SUCCESS_COLOR};
     background: linear-gradient(135deg, #ecfdf5 0%, {BG_PRIMARY} 100%);
-}}
-
-/* Navigation */
-.nav-link {{
-    display: block;
-    padding: 0.75rem 1rem;
-    color: rgba(255,255,255,0.7);
-    text-decoration: none;
-    border-radius: 8px;
-    margin: 0.25rem 0;
-    transition: all 0.2s ease;
-}}
-
-.nav-link:hover, .nav-link.active {{
-    background-color: rgba(255,255,255,0.1);
-    color: white;
 }}
 
 /* Divider */

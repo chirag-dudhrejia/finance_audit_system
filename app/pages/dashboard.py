@@ -3,6 +3,7 @@ import os
 import uuid
 import base64
 import re
+import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
@@ -11,16 +12,6 @@ import pandas as pd
 import plotly.express as px
 from data.repositories.transaction_repo import TransactionRepo
 from services.insights import generate_insights
-from components.ui import apply_theme, render_sidebar
-
-st.set_page_config(
-    page_title="Finance Audit - Dashboard",
-    page_icon="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234f46e5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 3v18h18'/%3E%3Cpath d='M18 17V9'/%3E%3Cpath d='M13 17V5'/%3E%3Cpath d='M8 17v-3'/%3E%3C/svg%3E",
-    layout="wide",
-    initial_sidebar_state="expanded",
-)
-
-apply_theme()
 
 DEMO_USER_ID = str(uuid.uuid5(uuid.NAMESPACE_DNS, "demo-user"))
 
@@ -78,11 +69,6 @@ repo = TransactionRepo()
 transactions = repo.get_transactions(DEMO_USER_ID)
 
 txn_count = len(transactions)
-
-with st.sidebar:
-    render_sidebar(
-        current_page="dashboard", transaction_count=txn_count, show_stats=True
-    )
 
 st.html(
     """
@@ -174,6 +160,11 @@ st.html(
         height: 100px;
         background: radial-gradient(circle at top right, var(--accent-color, rgba(8,145,178,0.1)) 0%, transparent 70%);
         pointer-events: none;
+    }
+
+    .st-emotion-cache-1s8qyds {
+        margin-bottom: -0.8rem;
+        margin-top: -1.2rem;
     }
     
     .section-header {
@@ -289,7 +280,7 @@ st.html(
     background: linear-gradient(135deg, #312e81 0%, #4f46e5 40%, #6366f1 100%);
     border-radius: 16px;
     padding: 1.5rem 2rem;
-    margin-bottom: 1.25rem;
+    margin-bottom: 0rem;
     display: flex;
     align-items: center;
     gap: 1.25rem;
@@ -341,6 +332,21 @@ st.html(
 </div>
 """,
 )
+
+st.html(f"""
+<div style="display: flex; align-items: center; justify-content: space-between; background: white; border-radius: 12px; padding: 1rem 1.5rem; margin-bottom: 0.2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #e2e8f0;">
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <span style="font-size: 0.75rem; color: #94a3b8;">Showing</span>
+        <span style="background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%); color: white; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem; font-weight: 600;">{len(transactions)}</span>
+        <span style="font-size: 0.75rem; color: #94a3b8;">transactions</span>
+    </div>
+    <a href="/" style="text-decoration: none;">
+        <button style="background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.5rem 1rem; font-size: 0.8rem; color: #475569; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; transition: all 0.2s;">
+            <span>↑</span> Upload New
+        </button>
+    </a>
+</div>
+""")
 
 st.markdown("---")
 
@@ -550,7 +556,7 @@ with cat_col:
 with merch_col:
     if merch["top_merchants"]:
         merch_items = ""
-        for i, m in enumerate(merch["top_merchants"][:8], 1):
+        for i, m in enumerate(merch["top_merchants"][:], 1):
             badge_colors = {
                 1: ("#d97706", "#fef3c7"),
                 2: ("#64748b", "#f1f5f9"),
@@ -815,7 +821,7 @@ if view == "Day of Week":
 
         st.html(
             f"""
-        <div style="background: {alert_bg}; border: 1px solid {alert_border}; border-radius: 12px; padding: 1rem; margin-top: 1rem; display: flex; align-items: center; gap: 1rem;">
+        <div style="background: {alert_bg}; border: 1px solid {alert_border}; border-radius: 12px; padding: 1rem; margin-top: -1rem; display: flex; align-items: center; gap: 1rem;">
             <div style="width: 40px; height: 40px; background: linear-gradient(135deg, {alert_color}15 0%, {alert_color}08 100%); border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
                 <div style="color: {alert_color};">{DASH_ICONS["alert"] if is_high else DASH_ICONS["check"]}</div>
             </div>
@@ -833,18 +839,66 @@ if view == "Day of Week":
         chart_df = pd.DataFrame(
             {"Day": list(daily["chart"].keys()), "Spend": list(daily["chart"].values())}
         )
-        colors = [
-            "#10b981"
-            if d in ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
-            else "#f59e0b"
-            for d in chart_df["Day"]
-        ]
+        avg_spend = chart_df["Spend"].mean()
+        peak_idx = chart_df["Spend"].idxmax()
+        peak_day = chart_df.loc[peak_idx, "Day"]
+        peak_val = chart_df.loc[peak_idx, "Spend"]
+
+        colors = []
+        hover_texts = []
+        for _, row in chart_df.iterrows():
+            is_weekday = row["Day"] in [
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+            ]
+            base_color = "#10b981" if is_weekday else "#f59e0b"
+            light_color = "#a7f3d0" if is_weekday else "#fde68a"
+            colors.append(base_color if row["Spend"] >= avg_spend else light_color)
+            pct_of_avg = (row["Spend"] / avg_spend * 100) if avg_spend > 0 else 0
+            day_type = "Weekday" if is_weekday else "Weekend"
+            hover_texts.append(
+                f"<b>{row['Day']}</b><br>"
+                f"Spend: ₹{row['Spend']:,.0f}<br>"
+                f"{pct_of_avg:.0f}% of avg<br>"
+                f"<i>{day_type}</i>"
+            )
+
         fig = px.bar(
             chart_df,
             x="Day",
             y="Spend",
-            color=colors,
             text_auto=True,
+        )
+        fig.update_traces(marker_color=colors)
+        fig.update_traces(
+            hovertemplate="%{customdata}<extra></extra>",
+            customdata=hover_texts,
+            textposition="outside",
+            texttemplate="₹%{y:,.0f}",
+        )
+        fig.add_hline(
+            y=avg_spend,
+            line_dash="dot",
+            line_color="#94a3b8",
+            line_width=1.5,
+            annotation_text=f"Avg ₹{avg_spend:,.0f}",
+            annotation_position="top right",
+            annotation_font=dict(size=11, color="#94a3b8"),
+        )
+        fig.add_annotation(
+            x=peak_day,
+            y=peak_val,
+            text="Peak",
+            showarrow=True,
+            arrowhead=2,
+            arrowsize=1,
+            arrowwidth=1.5,
+            arrowcolor="#dc2626",
+            font=dict(size=11, color="#dc2626", family="Inter"),
+            yshift=12,
         )
         fig.update_layout(
             margin=dict(l=10, r=10, t=20, b=50),
@@ -854,14 +908,23 @@ if view == "Day of Week":
                 tickformat=",.0f",
                 rangemode="tozero",
                 automargin=True,
+                showgrid=True,
+                gridcolor="#f1f5f9",
+                gridwidth=1,
+                zeroline=False,
             ),
-            xaxis=dict(title=None, tickangle=0),
+            xaxis=dict(title=None, tickangle=0, showgrid=False),
             showlegend=False,
             height=320,
             plot_bgcolor="white",
             paper_bgcolor="white",
+            hoverlabel=dict(
+                bgcolor="white",
+                bordercolor="#e2e8f0",
+                font=dict(size=12, family="Inter", color="#0f172a"),
+            ),
+            font=dict(family="Inter"),
         )
-        fig.update_traces(textposition="outside", texttemplate="₹%{y:,.0f}")
         st.plotly_chart(fig, use_container_width=True)
 
 else:
@@ -1015,13 +1078,92 @@ else:
                 "Spend": list(monthly["chart"].values()),
             }
         )
+        avg_spend = chart_df["Spend"].mean()
+        peak_idx = chart_df["Spend"].idxmax()
+        low_idx = chart_df["Spend"].idxmin()
+        peak_month = chart_df.loc[peak_idx, "Month"]
+        peak_val = chart_df.loc[peak_idx, "Spend"]
+        low_month = chart_df.loc[low_idx, "Month"]
+        low_val = chart_df.loc[low_idx, "Spend"]
+
+        bar_colors = [
+            "#8b5cf6" if v >= avg_spend else "#c4b5fd" for v in chart_df["Spend"]
+        ]
+        hover_texts = []
+        for i, row in chart_df.iterrows():
+            pct_of_avg = (row["Spend"] / avg_spend * 100) if avg_spend > 0 else 0
+            mom_change = ""
+            if i > 0:
+                prev = chart_df.loc[i - 1, "Spend"]
+                if prev > 0:
+                    change_pct = ((row["Spend"] - prev) / prev) * 100
+                    arrow = "↑" if change_pct >= 0 else "↓"
+                    mom_change = f"<br>MoM: {arrow} {abs(change_pct):.1f}%"
+            hover_texts.append(
+                f"<b>{row['Month']}</b><br>"
+                f"Spend: ₹{row['Spend']:,.0f}<br>"
+                f"{pct_of_avg:.0f}% of avg{mom_change}"
+            )
+
         fig = px.bar(
             chart_df,
             x="Month",
             y="Spend",
             text_auto=True,
-            color_discrete_sequence=["#8b5cf6"],
         )
+        fig.update_traces(marker_color=bar_colors)
+        fig.update_traces(
+            hovertemplate="%{customdata}<extra></extra>",
+            customdata=hover_texts,
+            textposition="outside",
+            texttemplate="₹%{y:,.0f}",
+        )
+        if len(chart_df) >= 2:
+            x_numeric = np.arange(len(chart_df))
+            z = np.polyfit(x_numeric, chart_df["Spend"].values, 1)
+            trend_y = np.polyval(z, x_numeric)
+            fig.add_scatter(
+                x=chart_df["Month"],
+                y=trend_y,
+                mode="lines",
+                line=dict(color="#4f46e5", width=2, dash="dot"),
+                name="Trend",
+                hoverinfo="skip",
+            )
+        fig.add_hline(
+            y=avg_spend,
+            line_dash="dot",
+            line_color="#94a3b8",
+            line_width=1.5,
+            annotation_text=f"Avg ₹{avg_spend:,.0f}",
+            annotation_position="top right",
+            annotation_font=dict(size=11, color="#94a3b8"),
+        )
+        fig.add_annotation(
+            x=peak_month,
+            y=peak_val,
+            text=f"Peak",
+            showarrow=True,
+            arrowhead=2,
+            arrowsize=1,
+            arrowwidth=1.5,
+            arrowcolor="#dc2626",
+            font=dict(size=11, color="#dc2626", family="Inter"),
+            yshift=12,
+        )
+        if low_val < peak_val:
+            fig.add_annotation(
+                x=low_month,
+                y=low_val,
+                text=f"Low",
+                showarrow=True,
+                arrowhead=2,
+                arrowsize=1,
+                arrowwidth=1.5,
+                arrowcolor="#059669",
+                font=dict(size=11, color="#059669", family="Inter"),
+                yshift=12,
+            )
         fig.update_layout(
             margin=dict(l=10, r=10, t=20, b=50),
             yaxis=dict(
@@ -1030,14 +1172,23 @@ else:
                 tickformat=",.0f",
                 rangemode="tozero",
                 automargin=True,
+                showgrid=True,
+                gridcolor="#f1f5f9",
+                gridwidth=1,
+                zeroline=False,
             ),
-            xaxis=dict(title=None, tickangle=0),
+            xaxis=dict(title=None, tickangle=0, showgrid=False),
             showlegend=False,
             height=320,
             plot_bgcolor="white",
             paper_bgcolor="white",
+            hoverlabel=dict(
+                bgcolor="white",
+                bordercolor="#e2e8f0",
+                font=dict(size=12, family="Inter", color="#0f172a"),
+            ),
+            font=dict(family="Inter"),
         )
-        fig.update_traces(textposition="outside", texttemplate="₹%{y:,.0f}")
         st.plotly_chart(fig, use_container_width=True)
 
 st.markdown("---")

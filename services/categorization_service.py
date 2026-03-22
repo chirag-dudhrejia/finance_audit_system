@@ -1,4 +1,4 @@
-from agents.categorizer_agent import categorize_llm
+from agents.categorizer_agent import categorize_batch_llm
 
 RULES = {
     # Food & Dining
@@ -81,7 +81,11 @@ def _extract_name_from_upi(description: str) -> str:
 
 class CategorizationService:
     def categorize(self, description: str) -> str:
-        """Categorize a transaction using rules first, LLM as fallback."""
+        """Categorize a transaction using rules first.
+
+        Returns the matched category or "PENDING_LLM" if no rule matched.
+        LLM fallback is deferred to batch processing via categorize_batch().
+        """
         if not description:
             return "Uncategorized"
 
@@ -92,18 +96,41 @@ class CategorizationService:
             if keyword in desc:
                 return category
 
-        # UPI transaction - send extracted name to LLM
-        if desc.startswith("upi/"):
-            name = _extract_name_from_upi(description)
-            if name:
-                try:
-                    return categorize_llm(name)
-                except Exception:
-                    return "Uncategorized"
-            return "Uncategorized"
+        # No rule matched — defer LLM to batch
+        return "PENDING_LLM"
 
-        # LLM fallback for non-UPI transactions
-        try:
-            return categorize_llm(description)
-        except Exception:
-            return "Uncategorized"
+    def categorize_batch(self, descriptions: list[str]) -> list[str]:
+        """Batch-categorize transactions using LLM.
+
+        Chunks the input into groups of 15 and sends each chunk
+        to the LLM in a single call. Failed chunks are retried
+        with exponential backoff.
+
+        Args:
+            descriptions: List of transaction descriptions that didn't match rules.
+
+        Returns:
+            List of category strings, same order as input.
+        """
+        if not descriptions:
+            return []
+
+        # Pre-process: extract UPI names where applicable
+        processed = []
+        for desc in descriptions:
+            d = desc.lower().strip() if desc else ""
+            if d.startswith("upi/"):
+                name = _extract_name_from_upi(desc)
+                processed.append(name if name else desc)
+            else:
+                processed.append(desc)
+
+        # Chunk and categorize
+        chunk_size = 30
+        all_results = []
+        for i in range(0, len(processed), chunk_size):
+            chunk = processed[i : i + chunk_size]
+            results = categorize_batch_llm(chunk)
+            all_results.extend(results)
+
+        return all_results

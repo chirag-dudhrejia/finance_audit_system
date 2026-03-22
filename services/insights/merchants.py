@@ -65,7 +65,7 @@ def compute(transactions: list[dict]) -> dict:
     )
 
     return {
-        "top_merchants": top_merchants[:10],
+        "top_merchants": top_merchants[:],
         "by_category": by_category,
         "unique_merchants": len(merchant_spend),
     }
