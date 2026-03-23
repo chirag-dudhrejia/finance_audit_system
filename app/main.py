@@ -18,6 +18,16 @@ apply_theme()
 
 # Auth gate: check if user is logged in
 if "user_id" not in st.session_state:
+    # Try restoring session from Supabase (survives page refresh)
+    from core.auth import get_current_user
+
+    user = get_current_user()
+    if user:
+        st.session_state.user_id = user["user_id"]
+        st.session_state.user_email = user["email"]
+        st.rerun()
+
+if "user_id" not in st.session_state:
     # Hide sidebar on auth pages
     st.markdown(
         "<style>[data-testid='stSidebar'] { display: none !important; }</style>",

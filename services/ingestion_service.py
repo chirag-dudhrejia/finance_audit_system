@@ -141,6 +141,8 @@ class IngestionService:
         print(f"[INGESTION] Categories: {category_summary}")
 
         df = pd.DataFrame(records)
+        df = df.drop_duplicates(subset=["txn_hash"], keep="first")
+        records = df.to_dict(orient="records")
         df.to_csv("debug_records_before.csv", index=False)
 
         # Final cleanup: remove any NaN values from all records

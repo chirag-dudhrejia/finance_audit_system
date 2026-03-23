@@ -14,7 +14,7 @@ from core.auth import sign_in, sign_up
 if "auth_view" not in st.session_state:
     st.session_state.auth_view = "login"
 
-CHART_SVG = '<svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>'
+CHART_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg>'
 EMAIL_SVG = '<svg viewBox="0 0 24 24" width="16" height="16"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>'
 LOCK_SVG = '<svg viewBox="0 0 24 24" width="16" height="16"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>'
 USER_SVG = '<svg viewBox="0 0 24 24" width="16" height="16"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'
@@ -33,7 +33,8 @@ LOGIN_CSS = """
 
 .auth-brand-card {
     max-width: 480px;
-    margin: 8vh auto 0 auto;
+    margin: 0.2rem
+     auto 0 auto;
     display: flex;
     border-radius: 16px;
     border: 1px solid #e2e8f0;
@@ -68,8 +69,8 @@ LOGIN_CSS = """
 }
 
 .auth-brand-left .icon-box {
-    width: 52px;
-    height: 52px;
+    width: 70px;
+    height: 70px;
     background: rgba(255,255,255,0.2);
     border-radius: 12px;
     display: inline-flex;
@@ -81,8 +82,8 @@ LOGIN_CSS = """
 }
 
 .auth-brand-left .icon-box svg {
-    width: 24px;
-    height: 24px;
+    width: 52px;
+    height: 52px;
     stroke: #ffffff;
     fill: none;
     stroke-width: 2;
@@ -121,6 +122,10 @@ LOGIN_CSS = """
     border-top: 1px solid #f1f5f9;
 }
 
+.st-emotion-cache-1bcyifm {
+    background: white;
+}
+
 /* Form header — inside the form card */
 .auth-form-header h2 {
     margin: 0;
@@ -147,16 +152,11 @@ LOGIN_CSS = """
 .auth-form-card .stForm {
     max-width: 480px;
     margin: 0.75rem auto 0 auto !important;
-    background: #ffffff !important;
+    background: white;
     border: 1px solid #e2e8f0 !important;
     border-radius: 16px !important;
     padding: 1.75rem 2.25rem 1.75rem 2.25rem !important;
     box-shadow: 0 4px 24px rgba(0,0,0,0.06) !important;
-}
-
-.st-emotion-cache-1bcyifm {
-    box-shadow: 0 4px 24px rgba(0,0,0,0.06) !important;
-    background: white !important;
 }
 
 .auth-form-card .stForm label {
@@ -223,95 +223,6 @@ LOGIN_CSS = """
     margin-top: 0.5rem !important;
 }
 
-.auth-form-card [data-testid="stTextInput"] {
-    margin-bottom: 0.5rem;
-}
-
-.auth-form-card [data-testid="stTextInput"] input {
-    border-radius: 10px !important;
-    border: 1.5px solid rgba(226, 232, 240, 0.8) !important;
-    padding: 0.75rem 0.875rem !important;
-    font-size: 0.875rem !important;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
-    background: rgba(248, 250, 252, 0.8) !important;
-}
-
-.auth-form-card [data-testid="stTextInput"] input:focus {
-    border-color: #4f46e5 !important;
-    box-shadow: 0 0 0 3px rgba(79,70,229,0.12) !important;
-    background: rgba(255, 255, 255, 0.9) !important;
-}
-
-.auth-form-card [data-testid="stTextInput"] input::placeholder {
-    color: #94a3b8 !important;
-}
-
-.auth-form-card [data-testid="stFormSubmitButton"] {
-    margin-top: 1rem;
-}
-
-.auth-form-card [data-testid="stFormSubmitButton"] button {
-    background: linear-gradient(135deg, #312e81 0%, #4f46e5 40%, #6366f1 100%);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    padding: 0.75rem 1rem;
-    font-weight: 600;
-    font-size: 0.9375rem;
-    letter-spacing: 0.02em;
-    transition: all 0.2s ease;
-    box-shadow: 0 2px 8px rgba(79,70,229,0.25);
-}
-
-.auth-form-card [data-testid="stFormSubmitButton"] button:hover {
-    background: linear-gradient(135deg, #4338ca 0%, #4f46e5 100%);
-    box-shadow: 0 4px 12px rgba(79,70,229,0.35);
-    transform: translateY(-1px);
-}
-
-.auth-form-card [data-testid="stFormSubmitButton"] button:active {
-    transform: translateY(0);
-}
-
-.primaryFormSubmit {
-    background: linear-gradient(135deg, #312e81 0%, #4f46e5 40%, #6366f1 100%);
-}
-
-/* Error and success states */
-.auth-form-card [data-testid="stAlert"] {
-    border-radius: 10px !important;
-    font-size: 0.8125rem !important;
-    margin-top: 0.5rem !important;
-}
-
-.auth-form-card [data-testid="stAlert"][data-baseweb="notification"] {
-    border-left: 3px solid !important;
-}
-
-.auth-toggle {
-    max-width: 480px;
-    margin: 0 auto;
-    text-align: center;
-    padding: 1.25rem 0;
-    border-top: 1px solid #f1f5f9;
-}
-
-.auth-toggle button {
-    background: none !important;
-    border: none !important;
-    color: #4f46e5 !important;
-    font-weight: 600 !important;
-    font-size: 0.8125rem !important;
-    padding: 0 !important;
-    box-shadow: none !important;
-    cursor: pointer;
-    transition: color 0.15s ease;
-}
-
-.auth-toggle button:hover {
-    color: #4338ca !important;
-    text-decoration: underline;
-}
 </style>
 """
 
@@ -319,28 +230,34 @@ LOGIN_CSS = """
 def render_login_page():
     st.markdown(LOGIN_CSS, unsafe_allow_html=True)
 
-    if st.session_state.auth_view == "login":
-        _render_login_view()
-    else:
-        _render_signup_view()
+    log1, log2 = st.columns(2)
+    with log1:
+        st.markdown(
+            f"""
+        <div class="auth-brand-card">
+            <div class="auth-brand-left">
+                <div class="icon-box">
+                    {CHART_SVG}
+                </div>
+            </div>
+            <div class="auth-brand-right">
+                <h1>Finance Audit</h1>
+                <p>Intelligence Platform</p>
+                <div class="tagline">Secure financial analysis powered by AI</div>
+            </div>
+        </div>
+        """,
+            unsafe_allow_html=True,
+        )
+
+    with log2:
+        if st.session_state.auth_view == "login":
+            _render_login_view()
+        else:
+            _render_signup_view()
 
 
 def _render_login_view():
-    st.html(f"""
-    <div class="auth-brand-card">
-        <div class="auth-brand-left">
-            <div class="icon-box">
-                {CHART_SVG}
-            </div>
-        </div>
-        <div class="auth-brand-right">
-            <h1>Finance Audit</h1>
-            <p>Intelligence Platform</p>
-            <div class="tagline">Secure financial analysis powered by AI</div>
-        </div>
-    </div>
-    """)
-
     with st.form("login_form", clear_on_submit=False):
         st.markdown(
             """<div class="auth-form-header">
@@ -377,29 +294,12 @@ def _render_login_view():
             else:
                 st.error(result["error"])
 
-    st.markdown('<div class="auth-toggle">', unsafe_allow_html=True)
     if st.button("Don't have an account? Create one", key="goto_signup"):
         st.session_state.auth_view = "signup"
         st.rerun()
-    st.markdown("</div>", unsafe_allow_html=True)
 
 
 def _render_signup_view():
-    st.html(f"""
-    <div class="auth-brand-card">
-        <div class="auth-brand-left">
-            <div class="icon-box">
-                {CHART_SVG}
-            </div>
-        </div>
-        <div class="auth-brand-right">
-            <h1>Finance Audit</h1>
-            <p>Intelligence Platform</p>
-            <div class="tagline">Secure financial analysis powered by AI</div>
-        </div>
-    </div>
-    """)
-
     with st.form("signup_form", clear_on_submit=False):
         st.markdown(
             """<div class="auth-form-header">
@@ -453,11 +353,9 @@ def _render_signup_view():
             else:
                 st.error(result["error"])
 
-    st.markdown('<div class="auth-toggle">', unsafe_allow_html=True)
     if st.button("Already have an account? Sign in", key="goto_login"):
         st.session_state.auth_view = "login"
         st.rerun()
-    st.markdown("</div>", unsafe_allow_html=True)
 
 
 render_login_page()

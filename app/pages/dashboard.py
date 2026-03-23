@@ -1196,8 +1196,8 @@ else:
 
 st.markdown("---")
 
-st.html(
-    """
+st.markdown(
+   f"""
 <div class="enterprise-card" style="padding: 1.25rem; margin-bottom: 1rem;">
     <div style="display: flex; align-items: center; justify-content: space-between;">
         <div style="display: flex; align-items: center; gap: 0.75rem;">
@@ -1210,6 +1210,7 @@ st.html(
     </div>
 </div>
 """,
+unsafe_allow_html=True
 )
 
 txn_df = pd.DataFrame(transactions)

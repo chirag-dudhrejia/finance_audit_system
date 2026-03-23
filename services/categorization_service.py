@@ -137,7 +137,7 @@ class CategorizationService:
                 processed.append(desc)
 
         # Chunk and categorize
-        chunk_size = 15
+        chunk_size = 50
         all_results = []
         for i in range(0, len(processed), chunk_size):
             chunk = processed[i : i + chunk_size]
