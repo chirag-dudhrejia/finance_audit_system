@@ -1,14 +1,11 @@
 import sys
 import os
-import uuid
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
 
 import streamlit as st
 from services.ingestion_service import IngestionService
 from components.ui import alert_banner
-
-DEMO_USER_ID = str(uuid.uuid5(uuid.NAMESPACE_DNS, "demo-user"))
 
 SVG_ICONS = {
     "upload": '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>',
@@ -411,7 +408,8 @@ st.markdown("</div>", unsafe_allow_html=True)
 if uploaded_file:
     with st.spinner("Processing your statement..."):
         service = IngestionService()
-        result = service.ingest_file(uploaded_file, user_id=DEMO_USER_ID)
+        user_id = st.session_state.get("user_id", "")
+        result = service.ingest_file(uploaded_file, user_id=user_id)
 
     st.markdown("---")
 

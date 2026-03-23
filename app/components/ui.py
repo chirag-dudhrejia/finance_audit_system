@@ -338,7 +338,9 @@ def alert_banner(message: str, alert_type: str = "info"):
     )
 
 
-def render_sidebar(transaction_count: int = 0, show_stats: bool = True):
+def render_sidebar(
+    transaction_count: int = 0, show_stats: bool = True, user_email: str = ""
+):
     """
     Render a clean, minimal sidebar brand and stats.
     Navigation is handled by st.navigation() in main.py.
@@ -346,6 +348,7 @@ def render_sidebar(transaction_count: int = 0, show_stats: bool = True):
     Args:
         transaction_count: Number of transactions to display
         show_stats: Whether to show quick stats
+        user_email: Logged-in user's email for display
     """
     st.markdown(SIDEBAR_CSS, unsafe_allow_html=True)
 
@@ -364,6 +367,18 @@ def render_sidebar(transaction_count: int = 0, show_stats: bool = True):
         </div>
     </div>
     """)
+
+    if user_email:
+        user_svg = '<svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'
+        st.html(f"""
+        <div class="sidebar-divider-light"></div>
+        <div class="sidebar-meta-light">
+            <div class="sidebar-meta-item-light">
+                {user_svg}
+                <span style="font-size: 0.7rem; word-break: break-all;">{user_email}</span>
+            </div>
+        </div>
+        """)
 
     if show_stats and transaction_count > 0:
         doc_svg = '<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>'

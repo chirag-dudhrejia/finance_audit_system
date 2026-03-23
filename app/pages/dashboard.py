@@ -1,6 +1,5 @@
 import sys
 import os
-import uuid
 import base64
 import re
 import numpy as np
@@ -12,8 +11,6 @@ import pandas as pd
 import plotly.express as px
 from data.repositories.transaction_repo import TransactionRepo
 from services.insights import generate_insights
-
-DEMO_USER_ID = str(uuid.uuid5(uuid.NAMESPACE_DNS, "demo-user"))
 
 
 def svg_to_img(svg_str):
@@ -66,7 +63,8 @@ DASH_ICONS_RAW = {
 DASH_ICONS = {k: svg_to_img(v) for k, v in DASH_ICONS_RAW.items()}
 
 repo = TransactionRepo()
-transactions = repo.get_transactions(DEMO_USER_ID)
+user_id = st.session_state.get("user_id", "")
+transactions = repo.get_transactions(user_id)
 
 txn_count = len(transactions)
 
@@ -349,6 +347,11 @@ st.html(f"""
 """)
 
 st.markdown("---")
+
+if not transactions:
+    st.info("No transactions found. Upload a statement to get started.")
+    st.page_link("pages/upload.py", label="Upload Statement", icon="📤")
+    st.stop()
 
 insights = generate_insights(transactions)
 

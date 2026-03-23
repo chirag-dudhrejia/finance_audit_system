@@ -1,6 +1,5 @@
 import sys
 import os
-import uuid
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
@@ -17,17 +16,41 @@ st.set_page_config(
 
 apply_theme()
 
-DEMO_USER_ID = str(uuid.uuid5(uuid.NAMESPACE_DNS, "demo-user"))
-repo = TransactionRepo()
-txn_count = len(repo.get_transactions(DEMO_USER_ID))
+# Auth gate: check if user is logged in
+if "user_id" not in st.session_state:
+    # Hide sidebar on auth pages
+    st.markdown(
+        "<style>[data-testid='stSidebar'] { display: none !important; }</style>",
+        unsafe_allow_html=True,
+    )
+    pg = st.navigation(
+        [st.Page("pages/login.py", title="Login", icon="🔑", url_path="login")],
+        position="hidden",
+    )
+    pg.run()
+else:
+    # Authenticated — show main app
+    user_id = st.session_state.user_id
+    user_email = st.session_state.get("user_email", "")
 
-with st.sidebar:
-    render_sidebar(transaction_count=txn_count)
+    repo = TransactionRepo()
+    txn_count = len(repo.get_transactions(user_id))
 
-pages = [
-    st.Page("pages/dashboard.py", title="Dashboard", icon="📊", url_path="dashboard"),
-    st.Page("pages/upload.py", title="Upload Statement", icon="📤", url_path="upload"),
-]
+    with st.sidebar:
+        render_sidebar(transaction_count=txn_count, user_email=user_email)
 
-pg = st.navigation(pages, position="sidebar")
-pg.run()
+    pages = [
+        st.Page(
+            "pages/dashboard.py", title="Dashboard", icon="📊", url_path="dashboard"
+        ),
+        st.Page(
+            "pages/upload.py",
+            title="Upload Statement",
+            icon="📤",
+            url_path="upload",
+        ),
+        st.Page("pages/logout.py", title="Logout", icon="🚪", url_path="logout"),
+    ]
+
+    pg = st.navigation(pages, position="sidebar")
+    pg.run()

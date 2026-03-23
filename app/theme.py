@@ -63,8 +63,8 @@ def get_css():
 }}
 
 .stAppHeader {{
-    height: 3rem;
-    min-height: 3rem;
+    height: 2rem;
+    min-height: 2rem;
 }}
 
 .stMainBlockContainer {{
