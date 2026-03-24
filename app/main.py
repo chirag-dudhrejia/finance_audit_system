@@ -1,30 +1,66 @@
 import sys
 import os
-import uuid
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 import streamlit as st
-from services.ingestion_service import IngestionService
+from components.ui import apply_theme, render_sidebar
+from data.repositories.transaction_repo import TransactionRepo
 
-st.set_page_config(page_title="Upload", layout="wide")
-
-st.title("Personal Finance Audit")
-
-DEMO_USER_ID = str(uuid.uuid5(uuid.NAMESPACE_DNS, "demo-user"))
-
-uploaded_file = st.file_uploader(
-    "Upload CSV or PDF bank statement", type=["csv", "pdf"]
+st.set_page_config(
+    page_title="Finance Audit",
+    page_icon="📊",
+    layout="wide",
+    initial_sidebar_state="expanded",
 )
 
-if uploaded_file:
-    service = IngestionService()
-    result = service.ingest_file(uploaded_file, user_id=DEMO_USER_ID)
+apply_theme()
 
-    st.success(f"Uploaded & processed {result['count']} transactions.")
+# Auth gate: check if user is logged in
+if "user_id" not in st.session_state:
+    # Try restoring session from Supabase (survives page refresh)
+    from core.auth import get_current_user
 
-    if result["categories"]:
-        st.subheader("Category Breakdown")
-        st.bar_chart(result["categories"])
+    user = get_current_user()
+    if user:
+        st.session_state.user_id = user["user_id"]
+        st.session_state.user_email = user["email"]
+        st.rerun()
 
-    st.info("Go to the **Dashboard** page in the sidebar to see detailed insights.")
+if "user_id" not in st.session_state:
+    # Hide sidebar on auth pages
+    st.markdown(
+        "<style>[data-testid='stSidebar'] { display: none !important; }</style>",
+        unsafe_allow_html=True,
+    )
+    pg = st.navigation(
+        [st.Page("pages/login.py", title="Login", icon="🔑", url_path="login")],
+        position="hidden",
+    )
+    pg.run()
+else:
+    # Authenticated — show main app
+    user_id = st.session_state.user_id
+    user_email = st.session_state.get("user_email", "")
+
+    repo = TransactionRepo()
+    txn_count = len(repo.get_transactions(user_id))
+
+    with st.sidebar:
+        render_sidebar(transaction_count=txn_count, user_email=user_email)
+
+    pages = [
+        st.Page(
+            "pages/dashboard.py", title="Dashboard", icon="📊", url_path="dashboard"
+        ),
+        st.Page(
+            "pages/upload.py",
+            title="Upload Statement",
+            icon="📤",
+            url_path="upload",
+        ),
+        st.Page("pages/logout.py", title="Logout", icon="🚪", url_path="logout"),
+    ]
+
+    pg = st.navigation(pages, position="sidebar")
+    pg.run()
