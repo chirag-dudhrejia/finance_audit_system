@@ -4,6 +4,7 @@ Reusable enterprise-grade UI components for Finance Audit System
 
 import streamlit as st
 import pandas as pd
+import os
 from theme import (
     PRIMARY_COLOR,
     SECONDARY_COLOR,
@@ -19,6 +20,98 @@ from theme import (
     SHADOW_SM,
     SHADOW_MD,
 )
+
+SIDEBAR_CSS = """
+<style>
+.sidebar-brand-card {
+    background: linear-gradient(135deg, #312e81 0%, #4f46e5 40%, #6366f1 100%);
+    border-radius: 12px;
+    padding: 1rem 1rem;
+    margin-bottom: 1rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(79,70,229,0.2);
+}
+.sidebar-brand-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background:
+        radial-gradient(ellipse at 20% 80%, rgba(99,102,241,0.4) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(129,140,248,0.3) 0%, transparent 50%);
+    pointer-events: none;
+}
+.sidebar-brand-inner {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    position: relative;
+    z-index: 1;
+}
+.sidebar-brand-icon {
+    width: 36px;
+    height: 36px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+.sidebar-brand-icon svg {
+    width: 18px;
+    height: 18px;
+    stroke: #ffffff;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.sidebar-brand-text h1 {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+    letter-spacing: -0.01em;
+}
+.sidebar-brand-text p {
+    font-size: 0.6875rem;
+    color: rgba(255,255,255,0.7);
+    margin: 0.125rem 0 0 0;
+    font-weight: 400;
+}
+.sidebar-divider-light {
+    height: 1px;
+    background: #e8e0ff;
+    margin: 0.75rem 0;
+}
+.sidebar-meta-light {
+    padding: 0 0.25rem;
+}
+.sidebar-meta-item-light {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-bottom: 0.375rem;
+}
+.sidebar-meta-item-light svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.75;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+</style>
+"""
 
 
 def apply_theme():
@@ -146,44 +239,6 @@ def page_title(title: str, subtitle: str = None):
         )
 
 
-def sidebar_logo(title: str = "Finance Audit", subtitle: str = "Enterprise"):
-    """Add a styled logo to the sidebar"""
-    st.sidebar.markdown(
-        f"""
-        <div style="padding: 1rem 0; margin-bottom: 1rem;">
-            <h2 style="color: white; font-size: 1.5rem; font-weight: 700; margin: 0;">
-                {title}
-            </h2>
-            <p style="color: rgba(255,255,255,0.6); font-size: 0.75rem; margin: 0.25rem 0 0 0;">
-                {subtitle}
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-
-def sidebar_nav(items: list):
-    """Create styled navigation links in sidebar"""
-    for item in items:
-        st.sidebar.markdown(
-            f"""
-            <a href="/{item["path"]}" style="
-                display: block;
-                padding: 0.75rem 1rem;
-                color: rgba(255,255,255,0.7);
-                text-decoration: none;
-                border-radius: 8px;
-                margin: 0.25rem 0;
-                transition: all 0.2s ease;
-            ">
-                {item["icon"]} {item["label"]}
-            </a>
-            """,
-            unsafe_allow_html=True,
-        )
-
-
 def category_badge(category: str):
     """Generate HTML for a category badge with color"""
     colors = {
@@ -281,3 +336,58 @@ def alert_banner(message: str, alert_type: str = "info"):
         """,
         unsafe_allow_html=True,
     )
+
+
+def render_sidebar(
+    transaction_count: int = 0, show_stats: bool = True, user_email: str = ""
+):
+    """
+    Render a clean, minimal sidebar brand and stats.
+    Navigation is handled by st.navigation() in main.py.
+
+    Args:
+        transaction_count: Number of transactions to display
+        show_stats: Whether to show quick stats
+        user_email: Logged-in user's email for display
+    """
+    st.markdown(SIDEBAR_CSS, unsafe_allow_html=True)
+
+    chart_svg = '<svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>'
+
+    st.html(f"""
+    <div class="sidebar-brand-card">
+        <div class="sidebar-brand-inner">
+            <div class="sidebar-brand-icon">
+                {chart_svg}
+            </div>
+            <div class="sidebar-brand-text">
+                <h1>Finance Audit</h1>
+                <p>Intelligence Platform</p>
+            </div>
+        </div>
+    </div>
+    """)
+
+    if user_email:
+        user_svg = '<svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>'
+        st.html(f"""
+        <div class="sidebar-divider-light"></div>
+        <div class="sidebar-meta-light">
+            <div class="sidebar-meta-item-light">
+                {user_svg}
+                <span style="font-size: 0.7rem; word-break: break-all;">{user_email}</span>
+            </div>
+        </div>
+        """)
+
+    if show_stats and transaction_count > 0:
+        doc_svg = '<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>'
+        st.html(f"""
+        <div class="sidebar-divider-light"></div>
+        <div class="sidebar-meta-light">
+            <div class="sidebar-meta-item-light">
+                {doc_svg}
+                <span>{transaction_count:,} transactions</span>
+            </div>
+        </div>
+        """)

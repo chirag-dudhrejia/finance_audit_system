@@ -113,20 +113,46 @@ class IngestionService:
             print("[INGESTION] No records to insert")
             return {"count": 0, "categories": {}}
 
-        # Categorize each transaction
+        # Categorize each transaction (two-pass: rules first, then batch LLM)
         print(f"[INGESTION] Categorizing {len(records)} transactions...")
         category_summary = {}
-        for rec in records:
+
+        # Pass 1: Rule-based categorization, collect fallbacks
+        fallback_indices = []
+        for i, rec in enumerate(records):
             cat = self.categorizer.categorize(rec["description"])
-            rec["category"] = cat
-            category_summary[cat] = category_summary.get(cat, 0) + 1
+            if cat == "PENDING_LLM":
+                fallback_indices.append(i)
+            else:
+                rec["category"] = cat
+                category_summary[cat] = category_summary.get(cat, 0) + 1
+
+        # Pass 2: Batch LLM for fallbacks
+        if fallback_indices:
+            print(
+                f"[INGESTION] {len(fallback_indices)} transactions need LLM categorization (batching in chunks of 15)..."
+            )
+            fallback_descs = [records[i]["description"] for i in fallback_indices]
+            batch_results = self.categorizer.categorize_batch(fallback_descs)
+            for idx, cat in zip(fallback_indices, batch_results):
+                records[idx]["category"] = cat
+                category_summary[cat] = category_summary.get(cat, 0) + 1
 
         print(f"[INGESTION] Categories: {category_summary}")
+
+        df = pd.DataFrame(records)
+        df = df.drop_duplicates(subset=["txn_hash"], keep="first")
+        records = df.to_dict(orient="records")
+        df.to_csv("debug_records_before.csv", index=False)
 
         # Final cleanup: remove any NaN values from all records
         for rec in records:
             for key in rec:
                 rec[key] = _clean_nan(rec[key])
+
+        # this line is for coding agent here write the code for saving the records to the csv file for debugging purpose
+        df = pd.DataFrame(records)
+        df.to_csv("debug_records_after.csv", index=False)
 
         # Insert into DB
         self.repo.bulk_insert_clean(records)

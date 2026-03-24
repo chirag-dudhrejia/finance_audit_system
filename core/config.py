@@ -16,5 +16,9 @@ class Settings:
         "OPENROUTER_MODEL", "arcee-ai/trinity-large-preview:free"
     )
 
+    CATEGORIZATION_LLM_ENABLED = (
+        os.getenv("CATEGORIZATION_LLM_ENABLED", "true").lower() == "true"
+    )
+
 
 settings = Settings()

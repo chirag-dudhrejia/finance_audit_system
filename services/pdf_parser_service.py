@@ -314,7 +314,6 @@ Each object:
 }}
 
 IMPORTANT:
-- If only one amount is present → treat as debit
 - Remove line breaks inside description
 - Remove extra spaces
 - Do NOT include balance column
