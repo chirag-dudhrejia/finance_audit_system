@@ -102,17 +102,44 @@ def categorize_batch_llm(descriptions: list[str]) -> list[str]:
 
     numbered = "\n".join(f"{i + 1}. {desc}" for i, desc in enumerate(descriptions))
 
-    prompt = f"""Categorize these {len(descriptions)} bank transactions into exactly ONE category each.
+    prompt = f"""
+You are a financial transaction categorization engine.
 
-Valid categories: {", ".join(CATEGORIES)}
+Your task is to assign EXACTLY ONE category to EACH transaction.
 
-Transactions:
+---------------------
+STRICT RULES (MANDATORY)
+---------------------
+1. You MUST use ONLY the categories from the provided list.
+2. DO NOT create new categories.
+3. DO NOT modify category names.
+4. Output MUST strictly follow the required format.
+5. Output MUST contain EXACTLY {len(descriptions)} lines.
+6. Each line MUST correspond to the transaction number.
+7. DO NOT include explanations, notes, or extra text.
+8. If unsure, choose the closest matching category.
+9. If no category fits, use: Uncategorized
+
+---------------------
+VALID CATEGORIES
+---------------------
+{", ".join(CATEGORIES)}
+
+---------------------
+TRANSACTIONS
+---------------------
 {numbered}
 
-Reply with EXACTLY one line per transaction in this format:
+---------------------
+OUTPUT FORMAT (STRICT)
+---------------------
 1: <category>
 2: <category>
-..."""
+3: <category>
+...
+
+ONLY return the numbered list. NO extra text.
+"""
 
     max_retries = 3
     for attempt in range(max_retries):
